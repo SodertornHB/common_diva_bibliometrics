@@ -8,6 +8,6 @@ if (is.na(file.info(nsd.filename)$mtime) ||
             body = list(skjemaPassord = nsd.password,
                         BrukerLoggpaSjekk_0 = 'Logg+inn',
                         skjemaEpost = nsd.username))
-  r <- GET("https://dbh.nsd.uib.no/publiseringskanaler/erihplus/periodical/listApprovedAsCsv")
+  r <- GET("https://dbh.nsd.uib.no/publiseringskanaler/AlltidFerskListeTidsskriftSomCsv")
   writeBin(content(r, 'raw'), nsd.filename)
 }

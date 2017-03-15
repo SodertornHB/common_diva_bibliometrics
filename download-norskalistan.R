@@ -4,7 +4,7 @@ source('/home/shub/assets/cred.R')
 # Om vi kör som shub så skriver vi till vårt gemensamma bibliotek
 if (Sys.info()['user'] == 'shub') {
   nsd.issn = "/home/shub/assets/nsd.issn.csv"
-  nsd.forlag = "/home/shub/assets/nsd.issn.csv"
+  nsd.forlag = "/home/shub/assets/nsd.forlag.csv"
 } else {
   # Annars till lokal plats
   nsd.issn = "nsd.issn.csv"

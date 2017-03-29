@@ -1,4 +1,9 @@
-
+#
+# Funktioner för att filtrera data.frames. Funktionerna är inte ett separat bibliotek utan måste inkluderas
+# i de program där man vill använda dem. Exempelvis genom:
+#
+#  source('/home/shub/src/common/lib/sh.filter.R')
+#
 sh.filter <- function(df, ...) {
   # Applicerar ett dplyr::filter på en data.frame och gör samtidigt en notering (i samma data.frame)
   # om vilket filter som gjorde att en specifik rad filtrerades bort. Funktionen använder kolumnerna

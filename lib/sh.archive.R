@@ -16,7 +16,7 @@
 #
 sh.archive.start <- function(id) {
   XSH.timestamp <<- format(Sys.time(), "%Y%m%d-%H%M%S")
-  XSH.id <<- sprintf("%s-%s-%s", id, XSH.timestamp, Sys.getpid())
+  XSH.id <<- sprintf("%s-%s", id, XSH.timestamp)
   XSH.dir <<- sprintf("/home/shub/reports/%s", XSH.id)
   dir.create(XSH.dir)
 }

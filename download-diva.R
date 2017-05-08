@@ -12,7 +12,8 @@ filename = "/home/shub/assets/diva/diva-%format%-%timestamp%.csv"
 dir.create(dirname(filename), showWarnings = FALSE)
 
 origins = list("csvall" = "http://sh.diva-portal.org/smash/export.jsf?format=csvall&aq=[[]]&aqe=[]&aq2=[[{\"organisationId\":\"481\",\"organisationId-Xtra\":true}]]&onlyFullText=false&noOfRows=50000&sortOrder=title_sort_asc",
-               "csvall2" = "http://sh.diva-portal.org/smash/export.jsf?format=csvall2&aq=[[]]&aqe=[]&aq2=[[{\"organisationId\":\"481\",\"organisationId-Xtra\":true}]]&onlyFullText=false&noOfRows=50000&sortOrder=title_sort_asc"
+               "csvall2" = "http://sh.diva-portal.org/smash/export.jsf?format=csvall2&aq=[[]]&aqe=[]&aq2=[[{\"organisationId\":\"481\",\"organisationId-Xtra\":true}]]&onlyFullText=false&noOfRows=50000&sortOrder=title_sort_asc",
+               "csv2" = "http://sh.diva-portal.org/smash/export.jsf?format=csv02&aq=[[]]&aqe=[]&aq2=[[{\"organisationId\":\"481\",\"organisationId-Xtra\":true}]]&onlyFullText=false&noOfRows=50000&sortOrder=title_sort_asc"
                )
 
 for (format in names(origins)) {

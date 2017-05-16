@@ -1,8 +1,7 @@
 
 #
 # Filnamnet vi vill att nedladdade filer ska ha, %format% byts ut mot det specifika formatet, ex.v.
-# csvall eller csvall2. Om vi vill göra olika utsökningar och ha dem tillgängliga, ex.v. ta ut en
-# csvall som bara innehåller fulltext så skulle det gå att namnge den till csvall-fulltext osv.
+# csvall eller csvall2. Här processas också ett antal basfiler, som kan läsas in för vidare bearbetning.
 #
 # %timestamp% byts ut mot datum och tid som filen laddades ner.
 #
@@ -11,9 +10,8 @@ filename = "/home/shub/assets/diva/diva-%format%-%timestamp%.csv"
 
 dir.create(dirname(filename), showWarnings = FALSE)
 
-origins = list("csvall" = "http://sh.diva-portal.org/smash/export.jsf?format=csvall&aq=[[]]&aqe=[]&aq2=[[{\"organisationId\":\"481\",\"organisationId-Xtra\":true}]]&onlyFullText=false&noOfRows=50000&sortOrder=title_sort_asc",
-               "csvall2" = "http://sh.diva-portal.org/smash/export.jsf?format=csvall2&aq=[[]]&aqe=[]&aq2=[[{\"organisationId\":\"481\",\"organisationId-Xtra\":true}]]&onlyFullText=false&noOfRows=50000&sortOrder=title_sort_asc",
-               "csv2" = "http://sh.diva-portal.org/smash/export.jsf?format=csv02&aq=[[]]&aqe=[]&aq2=[[{\"organisationId\":\"481\",\"organisationId-Xtra\":true}]]&onlyFullText=false&noOfRows=50000&sortOrder=title_sort_asc"
+origins = list("csvall2_allt" = "http://sh.diva-portal.org/smash/export.jsf?format=csvall2&noOfRows=500000",
+               "csv2_allt" = "http://sh.diva-portal.org/smash/export.jsf?format=csv02&noOfRows=500000"
                )
 
 for (format in names(origins)) {
@@ -45,6 +43,82 @@ for (format in names(origins)) {
   if (length(l) >= 3) {
     for (fname in l[(length(l)-3):1]) {
       file.remove(paste(dirname(cfile), fname, sep="/"))
+    }
+  }
+}
+
+
+#------------------------------------------------------------------------------------------------------------------------
+#
+#bearbetning av nedladdad data: förbered dataframess att spara till csv-filer.
+#
+  
+#Nr 1: författarfraktionerad df utan studentuppsatser
+csvall2_df <- read.csv("/home/shub/assets/diva/diva-csvall2_allt-latest.csv",
+                       header=TRUE,
+                       sep=",",
+                       encoding="UTF-8",
+                       na.strings=c("","NA"),
+                       stringsAsFactors = FALSE
+)
+
+csv2_df <- read.csv("/home/shub/assets/diva/diva-csv2_allt-latest.csv",
+                 header=TRUE,
+                 sep=",",
+                 encoding="UTF-8",
+                 na.strings=c("","NA"),
+                 stringsAsFactors = FALSE
+)
+
+author_df <- merge(x = csv2_df, y = csvall2_df, by.x = "PID", by.y = "PID", all.x = TRUE)
+
+#sortera bort studentuppsatser
+author_df <- author_df[!(author_df$PublicationType == "Studentuppsats" |
+                           author_df$PublicationType == "Studentuppsats/Examensarbete" |
+                           author_df$PublicationType == "Studentuppsats (Examensarbete)"),]
+#eller: 
+#author_df <- author_df[!(is.na(author_df$ContentType)),]
+#vilken är mest tillförlitlig? PublicationType (säger Greta)
+
+#Nr 2: dela csvall2_allt i två delar, en med uppsatser och en utan (resultat: 2 df)
+studentessays_df <- csvall2_df[(csvall2_df$PublicationType == "Studentuppsats" |
+                                csvall2_df$PublicationType == "Studentuppsats/Examensarbete" |
+                                csvall2_df$PublicationType == "Studentuppsats (Examensarbete)"),]
+
+researchpubl_df <- csvall2_df[!(csvall2_df$PublicationType == "Studentuppsats" |
+                                  csvall2_df$PublicationType == "Studentuppsats/Examensarbete" |
+                                  csvall2_df$PublicationType == "Studentuppsats (Examensarbete)"),]
+
+#Nr 3: dra endast Sh ur researchpubl och author (resultat: 2 df)
+author_sh_df <- author_df[!(is.na(author_df$OrganisationIds)),]
+researchpubl_sh_df <- researchpubl_df[(grepl("\\[481\\]", researchpubl_df$Name)),]
+
+
+list_of_dataframes <- list("author_df" = author_df, "studentessays_df" = studentessays_df, "researchpubl_df" = researchpubl_df,
+                           "author_sh_df" = author_sh_df, "researchpubl_sh_df" = researchpubl_sh_df)
+
+for (df in names(list_of_dataframes)) {
+  af = sub("%format%", df, filename)
+  
+  afile = sub("%timestamp%", "latest", af)
+  if(is.na(file.info(afile)$mtime) ||
+     file.info(afile)$mtime < Sys.time()-(60*60*24)) {
+    as = sub("%timestamp%", format(Sys.time(), "%Y%m%d-%H%M"), af)
+    write.csv(list_of_dataframes[[df]], as)
+    if (file.exists(afile)) {
+      file.remove(afile)
+    }
+    file.symlink(as, afile)
+  }
+  
+  #
+  # Efter att ha laddat ner och uppdaterat länkar så tar vi bort eventuella tidigare nedladdningar.
+  # Vi behåller dock två kopior bakåt i tiden.
+  #
+  l = list.files(path = dirname(afile), pattern = sub("%timestamp%", ".*", basename(af)))
+  if (length(l) >= 3) {
+    for (fname in l[(length(l)-3):1]) {
+      file.remove(paste(dirname(afile), fname, sep="/"))
     }
   }
 }

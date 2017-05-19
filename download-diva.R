@@ -6,7 +6,7 @@
 # %timestamp% byts ut mot datum och tid som filen laddades ner.
 #
 
-filename = "/home/shub/assets/diva/diva-%format%-%timestamp%.csv"
+filename = "/home/shub/assets/diva/diva_%format%_%timestamp%.csv"
 
 dir.create(dirname(filename), showWarnings = FALSE)
 
@@ -28,7 +28,7 @@ for (format in names(origins)) {
   cfile = sub("%timestamp%", "latest", f)
   if (is.na(file.info(cfile)$mtime) ||
       file.info(cfile)$mtime < Sys.time()-(60*60*24)) {
-      fs = sub("%timestamp%", format(Sys.time(), "%Y%m%d-%H%M"), f)
+      fs = sub("%timestamp%", format(Sys.time(), "%Y%m%d_%H%M"), f)
       download.file(origins[[format]], fs)
       if (file.exists(cfile)) {
         file.remove(cfile)
@@ -54,7 +54,7 @@ for (format in names(origins)) {
 #
   
 #Nr 1: författarfraktionerad df utan studentuppsatser
-csvall2_df <- read.csv("/home/shub/assets/diva/diva-csvall2_allt-latest.csv",
+csvall2_df <- read.csv("/home/shub/assets/diva/diva_csvall2_allt_latest.csv",
                        header=TRUE,
                        sep=",",
                        encoding="UTF-8",
@@ -62,7 +62,7 @@ csvall2_df <- read.csv("/home/shub/assets/diva/diva-csvall2_allt-latest.csv",
                        stringsAsFactors = FALSE
 )
 
-csv2_df <- read.csv("/home/shub/assets/diva/diva-csv2_allt-latest.csv",
+csv2_df <- read.csv("/home/shub/assets/diva/diva_csv2_allt_latest.csv",
                  header=TRUE,
                  sep=",",
                  encoding="UTF-8",
@@ -103,7 +103,7 @@ for (df in names(list_of_dataframes)) {
   afile = sub("%timestamp%", "latest", af)
   if(is.na(file.info(afile)$mtime) ||
      file.info(afile)$mtime < Sys.time()-(60*60*24)) {
-    as = sub("%timestamp%", format(Sys.time(), "%Y%m%d-%H%M"), af)
+    as = sub("%timestamp%", format(Sys.time(), "%Y%m%d_%H%M"), af)
     write.csv(list_of_dataframes[[df]], as)
     if (file.exists(afile)) {
       file.remove(afile)

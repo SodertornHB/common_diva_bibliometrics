@@ -1,0 +1,31 @@
+---
+title: "Untitled"
+author: ""
+date: ''
+output:
+  pdf_document:
+    number_section: TRUE
+    latex_engine: xelatex
+mainfont: DejaVu Serif
+fontsize: 12p
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+# Rapport från biblioteket
+
+## Ämne 1
+
+## Ämne 2
+
+# Sammanfattning
+
+---
+fontsize: 8p
+---
+______
+DiVA har använts som publikationsdatabas vid Södetörns högskolan sedan 2011 och innehåller publikationer från 2000
+och framåt. Sedan hösten 2011 har det gått att markera andra publikationer än artiklar som refereed. Sedan
+februari 2013 finns underkategorier till publikationstyperna Artikel i tidskrift och Konferensbidrag.

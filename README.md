@@ -1,6 +1,6 @@
 # common repo
 
-This repo consists of two parts: scripts for saving data from different sources and a library (lib) with our own functions.
+This repo consists of three parts: scripts for saving data from different sources, a library (lib) with our own functions and a collection of local templates.
 
 ## Scripts for saving data to our server
 ### download-diva-mods
@@ -14,3 +14,6 @@ test phase. Not cleared with API about efficient downloading. Downloads our Plum
 
 ## Library (lib)
 library to collect our own functions.
+
+## sh_templates
+Packages with local templates for reports etc.

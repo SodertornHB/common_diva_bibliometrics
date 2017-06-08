@@ -40,8 +40,8 @@ for (format in names(origins)) {
   # Vi behåller dock två kopior bakåt i tiden.
   #
   l = list.files(path = dirname(cfile), pattern = sub("%timestamp%", ".*", basename(f)))
-  if (length(l) >= 3) {
-    for (fname in l[(length(l)-3):1]) {
+  if (length(l) >= 4) {
+    for (fname in l[(length(l)-4):1]) {
       file.remove(paste(dirname(cfile), fname, sep="/"))
     }
   }
@@ -116,8 +116,8 @@ for (df in names(list_of_dataframes)) {
   # Vi behåller dock två kopior bakåt i tiden.
   #
   l = list.files(path = dirname(afile), pattern = sub("%timestamp%", ".*", basename(af)))
-  if (length(l) >= 3) {
-    for (fname in l[(length(l)-3):1]) {
+  if (length(l) >= 4) {
+    for (fname in l[(length(l)-4):1]) {
       file.remove(paste(dirname(afile), fname, sep="/"))
     }
   }

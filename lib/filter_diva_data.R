@@ -114,3 +114,20 @@ filter_reviewed_no <- function(divadata) {
     filter(Reviewed == "false")
   return(a)
 }
+
+
+# Institutioner och ämnen -------------------------------------------------
+
+filter_orgs <- function(divadata, org) {
+  source('/home/shub/assets/shorgs.R')
+  list_of_orgs <- regmatches(divadata[["Name"]], gregexpr("\\[\\d+\\]", divadata[["Name"]])) #gregexpr tar flera instanser per rad
+  
+  #ta bort []
+  list_of_orgs <- rapply(list_of_orgs, function(x){gsub("\\[", "", x)}, how = "list")
+  list_of_orgs <- rapply(list_of_orgs, function(x){gsub("\\]", "", x)}, how = "list")
+  list_of_orgs <- tibble(list_of_orgs)
+  a <- bind_cols(divadata, list_of_orgs)
+  #skapa en separat kolumn med alla orgids i divadata:
+  a %>%
+    filter(map_lgl(list_of_orgs, ~any(c(org) %in% .x)))
+}

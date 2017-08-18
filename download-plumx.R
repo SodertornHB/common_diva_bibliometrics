@@ -13,6 +13,6 @@ if (Sys.info()['user'] == 'shub') {
 if (is.na(file.info(px.filename)$mtime) ||
     file.info(px.filename)$mtime < Sys.time()-(60*60*24*30)) {
   library(httr)
-  r <- GET("https://api.plu.mx/g/sh-se/_artifacts", query = list(auth=key))
+  r <- GET("https://api.plu.mx/g/sh-se/_artifacts", query = list(auth=key, size=25000))
   writeBin(content(r, 'raw'), px.filename)
 }

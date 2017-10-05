@@ -52,6 +52,7 @@ for (format in names(origins)) {
       file.symlink(fs, cfile)
   }
   #
+  
   # Efter att ha laddat ner och uppdaterat länkar så tar vi bort eventuella tidigare nedladdningar.
   # Vi behåller dock en kopia bakåt i tiden.
   #
@@ -111,14 +112,15 @@ researchpubl <- filter(csvall2, !(PublicationType %in% c("Studentuppsats",
 
 
 #Nr 3: endast Sh-affilierade publikationer från researchpubl och author (resultat: 2 tibbles)
-author_sh <- filter(author, !(is.na(OrganisationIds)))
-researchpubl_sh <- filter(researchpubl, (grepl("\\[481\\]", Name)))
+sh_author <- filter(author, !(is.na(OrganisationIds)))
+sh_researchpubl <- filter(researchpubl, (grepl("\\[481\\]", Name)))
 
 
 #-----------------------------------------------------------------------------------------------------------------
 #spara undan de 5 tibbles
 list_of_tibbles <- list("author" = author, "studentessays" = studentessays, "researchpubl" = researchpubl,
-                           "author_sh" = author_sh, "researchpubl_sh" = researchpubl_sh)
+                        "sh_author" = sh_author, "sh_researchpubl" = sh_researchpubl)
+
 
 for (t in names(list_of_tibbles)) {
   af = sub("%format%", t, filename)
@@ -127,7 +129,7 @@ for (t in names(list_of_tibbles)) {
   if(is.na(file.info(afile)$mtime) ||
      file.info(afile)$mtime < Sys.time()-(60*60*24)) {
     as = sub("%timestamp%", format(Sys.time(), "%Y%m%d_%H%M"), af)
-    write.csv(list_of_tibbles[[t]], as)
+    write_csv(list_of_tibbles[[t]], as)
     if (file.exists(afile)) {
       file.remove(afile)
     }
@@ -145,4 +147,3 @@ for (t in names(list_of_tibbles)) {
     }
   }
 }
-

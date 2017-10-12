@@ -2,8 +2,10 @@
 #
 #
 #download-diva
+#171012 Tidyverse och _ fixat, kolumn x1 återstår
 #171008 CHL återgång till innan Tidyverse pga symlink
 #170920 CHL (senaste uppdatering:anpassad till Tidyverse)
+#170411 JÖ
 #laddar ner DiVA-data (2 csv-filer) via DiVAs API en gång per dygn. Sparar en kopia bakåt i tiden. 
 #csv-filerna delas upp och kombineras till 5 basfiler: forskningspublikationer och forskare med och
 #utan Sh-affiliering samt studentuppsatser.
@@ -71,50 +73,50 @@ for (format in names(origins)) {
 #bearbetning av nedladdad data: förbered dfs.
 #
 #Nr 1: författarfraktionerad df utan studentuppsatser
-csvall2 <- read.csv("/home/shub/assets/diva/diva_csvall2_allt_latest.csv",
-                    header=TRUE,
-                    sep=",",
-                    encoding="UTF-8",
-                    na.strings=c("","NA"),
-                    stringsAsFactors = FALSE
-                    )
+#csvall2 <- read.csv("/home/shub/assets/diva/diva_csvall2_allt_latest.csv",
+#                    header=TRUE,
+#                    sep=",",
+#                    encoding="UTF-8",
+#                    na.strings=c("","NA"),
+#                    stringsAsFactors = FALSE
+#                    )
 
-csv2 <- read.csv("/home/shub/assets/diva/diva_csv2_allt_latest.csv",
-                    header=TRUE,
-                    sep=",",
-                    encoding="UTF-8",
-                    na.strings=c("","NA"),
-                    stringsAsFactors = FALSE
-                    )
+#csv2 <- read.csv("/home/shub/assets/diva/diva_csv2_allt_latest.csv",
+#                    header=TRUE,
+#                    sep=",",
+#                    encoding="UTF-8",
+#                    na.strings=c("","NA"),
+#                    stringsAsFactors = FALSE
+#                    )
 
-author <- merge(x = csv2, y = csvall2, by.x = "PID", by.y = "PID", all.x = TRUE)
+#author <- merge(x = csv2, y = csvall2, by.x = "PID", by.y = "PID", all.x = TRUE)
 
 #sortera bort studentuppsatser
-author <- author[!(author$PublicationType == "Studentuppsats" |
-                     author$PublicationType == "Studentuppsats/Examensarbete" |
-                     author$PublicationType == "Studentuppsats (Examensarbete)"),]  
+#author <- author[!(author$PublicationType == "Studentuppsats" |
+#                     author$PublicationType == "Studentuppsats/Examensarbete" |
+#                     author$PublicationType == "Studentuppsats (Examensarbete)"),]  
 
-#följande tidyverse-kod fungerar inte med symlink
+
 #Nr 1: författarfraktionerad tibble utan studentuppsatser
-#csvall2 <- read_csv("/home/shub/assets/diva/diva_csvall2_allt_latest.csv", col_names = TRUE)
+csvall2 <- read_csv("/home/shub/assets/diva/diva_csvall2_allt_latest.csv", col_names = TRUE)
 #PID blir felaktigt format vid inläsning, därför:
-#colnames(csvall2)[1] <- "PID"
+colnames(csvall2)[1] <- "PID"
 
 
-#csv2 <- read_csv("/home/shub/assets/diva/diva_csv2_allt_latest.csv", col_names = TRUE)
+csv2 <- read_csv("/home/shub/assets/diva/diva_csv2_allt_latest.csv", col_names = TRUE)
 #PID blir felaktigt format vid inläsning, därför:
-#colnames(csv2)[1] <- "PID"
+colnames(csv2)[1] <- "PID"
 
 
-#author <- left_join(csv2, csvall2, by = "PID")
+author <- left_join(csv2, csvall2, by = "PID")
 
 #sortera bort studentuppsatser ur författar-tibble
-#author <- filter(author, !(PublicationType %in% c("Studentuppsats",
-#                                                  "Studentuppsats/Examensarbete",
-#                                                  "Studentuppsats (Examensarbete)"
-#                                                  )
-#                           )
-#                 )
+author <- filter(author, !(PublicationType %in% c("Studentuppsats",
+                                                  "Studentuppsats/Examensarbete",
+                                                  "Studentuppsats (Examensarbete)"
+                                                  )
+                           )
+                 )
 
 #eller: 
 #author <- author[!(is.na(author$ContentType)),] syntax för read.csv
@@ -122,90 +124,89 @@ author <- author[!(author$PublicationType == "Studentuppsats" |
 
 #Nr 2: dela csvall2 i två delar, en med uppsatser och en utan (resultat: 2 dfs).
 #Notera utropstecknet.
-studentessays <- csvall2[(csvall2$PublicationType == "Studentuppsats" |
-                            csvall2$PublicationType == "Studentuppsats/Examensarbete" |
-                            csvall2$PublicationType == "Studentuppsats (Examensarbete)"),]
+#studentessays <- csvall2[(csvall2$PublicationType == "Studentuppsats" |
+#                            csvall2$PublicationType == "Studentuppsats/Examensarbete" |
+#                            csvall2$PublicationType == "Studentuppsats (Examensarbete)"),]
 
-researchpubl <- csvall2[!(csvall2$PublicationType == "Studentuppsats" |
-                            csvall2$PublicationType == "Studentuppsats/Examensarbete" |
-                            csvall2$PublicationType == "Studentuppsats (Examensarbete)"),]
+#researchpubl <- csvall2[!(csvall2$PublicationType == "Studentuppsats" |
+#                            csvall2$PublicationType == "Studentuppsats/Examensarbete" |
+#                            csvall2$PublicationType == "Studentuppsats (Examensarbete)"),]
 
 #följande tidyverse-kod fungerar inte med symlink
 #Nr 2: dela csvall2 i två delar, en med uppsatser och en utan (resultat: 2 tibbles). Notera utropstecknet.
-#studentessays <- filter(csvall2, (PublicationType %in% c("Studentuppsats", 
-#                                                        "Studentuppsats/Examensarbete", 
-#                                                        "Studentuppsats (Examensarbete)"
-#                                                        )
-#                                  )
-#                        )
+studentessays <- filter(csvall2, (PublicationType %in% c("Studentuppsats", 
+                                                        "Studentuppsats/Examensarbete", 
+                                                        "Studentuppsats (Examensarbete)"
+                                                        )
+                                  )
+                        )
 
-#researchpubl <- filter(csvall2, !(PublicationType %in% c("Studentuppsats", 
-#                                                               "Studentuppsats/Examensarbete", 
-#                                                               "Studentuppsats (Examensarbete)"
-#                                                        )
-#                                 )
-#                       )
+researchpubl <- filter(csvall2, !(PublicationType %in% c("Studentuppsats", 
+                                                               "Studentuppsats/Examensarbete", 
+                                                               "Studentuppsats (Examensarbete)"
+                                                        )
+                                 )
+                       )
 
 #Nr 3: dra endast Sh ur researchpubl och author (resultat: 2 df)
-author_sh <- author[!(is.na(author$OrganisationIds)),]
-researchpubl_sh <- researchpubl[(grepl("\\[481\\]", researchpubl$Name)),]
+#author_sh <- author[!(is.na(author$OrganisationIds)),]
+#researchpubl_sh <- researchpubl[(grepl("\\[481\\]", researchpubl$Name)),]
 
-#följande tidyverse-kod fungerar inte med symlink
 #Nr 3: endast Sh-affilierade publikationer från researchpubl och author (resultat: 2 tibbles)
-#sh_author <- filter(author, !(is.na(OrganisationIds)))
-#sh_researchpubl <- filter(researchpubl, (grepl("\\[481\\]", Name)))
+sh_author <- filter(author, !(is.na(OrganisationIds)))
+sh_researchpubl <- filter(researchpubl, (grepl("\\[481\\]", Name)))
 
 
 #-----------------------------------------------------------------------------------------------------------------
 #spara undan de 5 dfs
-list_of_dataframes <- list("author" = author, 
-                           "studentessays" = studentessays, 
-                           "researchpubl" = researchpubl,
-                           "author_sh" = author_sh,
-                           "researchpubl_sh" = researchpubl_sh)
+#list_of_dataframes <- list("author" = author, 
+#                           "studentessays" = studentessays, 
+#                           "researchpubl" = researchpubl,
+#                           "author_sh" = author_sh,
+#                           "researchpubl_sh" = researchpubl_sh)
 
-for (df in names(list_of_dataframes)) {
-  af = sub("%format%", df, filename)
-  
-  afile = sub("%timestamp%", "latest", af)
-  if(is.na(file.info(afile)$mtime) ||
-     file.info(afile)$mtime < Sys.time()-(60*60*24)) {
-    as = sub("%timestamp%", format(Sys.time(), "%Y%m%d_%H%M"), af)
-    write.csv(list_of_dataframes[[df]], as)
-    if (file.exists(afile)) {
-      file.remove(afile)
-      }
-    file.symlink(as, afile)
-    }
-
-#följande tidyverse-kod fungerar inte med symlink
-#spara undan de 5 tibbles
-#list_of_tibbles <- list("author" = author, "studentessays" = studentessays, "researchpubl" = researchpubl,
-#                        "sh_author" = sh_author, "sh_researchpubl" = sh_researchpubl)
-
-
-#for (t in names(list_of_tibbles)) {
-#  af = sub("%format%", t, filename)
+#for (df in names(list_of_dataframes)) {
+#  af = sub("%format%", df, filename)
   
 #  afile = sub("%timestamp%", "latest", af)
 #  if(is.na(file.info(afile)$mtime) ||
 #     file.info(afile)$mtime < Sys.time()-(60*60*24)) {
 #    as = sub("%timestamp%", format(Sys.time(), "%Y%m%d_%H%M"), af)
-#    write.csv(list_of_tibbles[[t]], as)
-#   if (file.exists(afile)) {
-#     file.remove(afile)
-#   }
+#    write.csv(list_of_dataframes[[df]], as)
+#    if (file.exists(afile)) {
+#      file.remove(afile)
+#      }
 #    file.symlink(as, afile)
-#  }
+#    }
+
+#spara undan de 5 tibbles
+list_of_tibbles <- list("author" = author, "studentessays" = studentessays, "researchpubl" = researchpubl,
+                        "author_sh" = author_sh, "researchpubl_sh" = researchpubl_sh)
+
+
+for (t in names(list_of_tibbles)) {
+  af = sub("%format%", t, filename)
+  
+  afile = sub("%timestamp%", "latest", af)
+  if(is.na(file.info(afile)$mtime) ||
+     file.info(afile)$mtime < Sys.time()-(60*60*24)) {
+    as = sub("%timestamp%", format(Sys.time(), "%Y%m%d_%H%M"), af)
+    write_csv(list_of_tibbles[[t]], as)
+    if (file.exists(afile)) {
+      file.remove(afile)
+      }
+    file.symlink(as, afile)
+    }
   
   #
   # Efter att ha laddat ner och uppdaterat länkar så tar vi bort eventuella tidigare nedladdningar.
-  # Vi behåller dock en kopia bakåt i tiden.
+  # Vi behåller dock en kopia bakåt i tiden. Notera mönstret [^_]* för underscore
   #
-  l = list.files(path = dirname(afile), pattern = sub("%timestamp%", ".*", basename(af)))
+  l = list.files(path = dirname(afile), pattern = sub("%timestamp%", "[^_]*", basename(af)))
   if (length(l) >= 4) {
     for (fname in l[(length(l)-4):1]) {
       file.remove(paste(dirname(afile), fname, sep="/"))
     }
   }
 }
+

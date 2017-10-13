@@ -13,7 +13,7 @@
 #
 #
 
-#library(tidyverse)
+library(tidyverse)
 
 #
 # Filnamnet vi vill att nedladdade filer ska ha, %format% byts ut mot det specifika formatet, ex.v.
@@ -141,9 +141,9 @@ studentessays <- filter(csvall2, (PublicationType %in% c("Studentuppsats",
                                   )
                         )
 
-researchpubl <- filter(csvall2, !(PublicationType %in% c("Studentuppsats", 
-                                                               "Studentuppsats/Examensarbete", 
-                                                               "Studentuppsats (Examensarbete)"
+researchpubl <- filter(csvall2, !(PublicationType %in% c("Studentuppsats",
+                                                         "Studentuppsats/Examensarbete",
+                                                         "Studentuppsats (Examensarbete)"
                                                         )
                                  )
                        )

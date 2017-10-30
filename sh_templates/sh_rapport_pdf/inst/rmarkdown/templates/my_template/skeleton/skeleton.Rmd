@@ -1,31 +1,127 @@
 ---
-title: "Untitled"
-author: ""
-date: ''
+mainfont: DejaVu Serif
+fontsize: 12pt
+geometry: textheight=500pt
+header-includes: 
+  \usepackage{fancyhdr}
+  \usepackage{datetime}
+  \newdateformat{myformat}{\THEYEAR\THEMONTH\THEDAY}
+  \pagestyle{fancy} 
+  \fancyhf{}
+  \addtolength{\headheight}{3cm}
+  \rhead{Biblioteket, författare \myformat\today} 
+  \lhead{\includegraphics[width=6cm]{sh_logo}}
+  \rfoot{\thepage}
 output:
   pdf_document:
     number_section: TRUE
     latex_engine: xelatex
-mainfont: DejaVu Serif
-fontsize: 12p
 ---
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
 ```
 
+
 # Rapport från biblioteket
+x
+
+x
+
+x
+
+x
+
+x
+
+x
+
+x
+
+x
+x
+x
+xx
+xxx
+
+xx
+x
+x
+x
+x
+xx
+x
+xxx
+xx
+xx
+xxx
+x
+xx
+xxx
+xx
+xx
+xx
+x
+x
+x
+x
+x
+x
+
+xxx
+x
+x
+
+xx
+x
+
+x
+xx
+
+xxx
+
 
 ## Ämne 1
+
+x
+xx
+x
+x
+
+x
+x
+xx
+
+x
+xx
+x
+xx
+x
+x
+
+x
+
+x
+
+x
+
+x
+
+x
+
+x
+
+x
+
+x
 
 ## Ämne 2
 
 # Sammanfattning
 
----
-fontsize: 8p
----
-______
-DiVA har använts som publikationsdatabas vid Södetörns högskolan sedan 2011 och innehåller publikationer från 2000
+# Bakgrund
+DiVA har använts som publikationsdatabas vid Södertörns högskola sedan 2011 och innehåller publikationer från 2000
 och framåt. Sedan hösten 2011 har det gått att markera andra publikationer än artiklar som refereed. Sedan
 februari 2013 finns underkategorier till publikationstyperna Artikel i tidskrift och Konferensbidrag.

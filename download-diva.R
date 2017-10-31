@@ -2,6 +2,7 @@
 #
 #
 #download-diva
+#171031 JÖ felhantering
 #171012 Tidyverse och _ fixat, kolumn x1 återstår
 #171008 CHL återgång till innan Tidyverse pga symlink
 #170920 CHL (senaste uppdatering:anpassad till Tidyverse)
@@ -45,15 +46,26 @@ for (format in names(origins)) {
   # så att denna i stället pekar på den nyss nedladdade filen.
   #
   cfile = sub("%timestamp%", "latest", f)
-  if (is.na(file.info(cfile)$mtime) ||
-      file.info(cfile)$mtime < Sys.time()-(60*60*24)) {
-      fs = sub("%timestamp%", format(Sys.time(), "%Y%m%d_%H%M"), f)
-      download.file(origins[[format]], fs)
-      if (file.exists(cfile)) {
-        file.remove(cfile)
-      }
-      file.symlink(fs, cfile)
+  fs = sub("%timestamp%", format(Sys.time(), "%Y%m%d_%H%M"), f)
+  tempfile = tempfile("diva")
+
+  download.file(origins[[format]], tempfile, quiet=TRUE)
+
+  #
+  # Filen ska vara större än 500000 bytes och ha fler än 5000 rader. Den
+  # ska också innehålla kolumnen PID, deklarerad i början av filen.
+  #
+  stopifnot(file.info(tempfile)$size > 500000)
+  stopifnot(length(readLines(tempfile)) > 5000)
+  stopifnot(grepl("PID", readChar(tempfile, 100), fixed=TRUE) == TRUE)
+
+  # Flytta till rätt ställe om allt är okey
+  invisible(file.rename(tempfile, fs))
+
+  if (file.exists(cfile)) {
+    file.remove(cfile)
   }
+  file.symlink(fs, cfile)
   #
   
   # Efter att ha laddat ner och uppdaterat länkar så tar vi bort eventuella tidigare nedladdningar.
@@ -188,15 +200,12 @@ for (t in names(list_of_tibbles)) {
   af = sub("%format%", t, filename)
   
   afile = sub("%timestamp%", "latest", af)
-  if(is.na(file.info(afile)$mtime) ||
-     file.info(afile)$mtime < Sys.time()-(60*60*24)) {
-    as = sub("%timestamp%", format(Sys.time(), "%Y%m%d_%H%M"), af)
-    write_csv(list_of_tibbles[[t]], as)
-    if (file.exists(afile)) {
-      file.remove(afile)
-      }
-    file.symlink(as, afile)
+  as = sub("%timestamp%", format(Sys.time(), "%Y%m%d_%H%M"), af)
+  write_csv(list_of_tibbles[[t]], as)
+  if (file.exists(afile)) {
+    file.remove(afile)
     }
+  file.symlink(as, afile)
   
   #
   # Efter att ha laddat ner och uppdaterat länkar så tar vi bort eventuella tidigare nedladdningar.

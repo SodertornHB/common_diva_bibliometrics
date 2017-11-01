@@ -14,7 +14,7 @@
 #
 #
 
-library(tidyverse)
+suppressMessages(library(tidyverse))
 
 #
 # Filnamnet vi vill att nedladdade filer ska ha, %format% byts ut mot det specifika formatet, ex.v.
@@ -110,12 +110,12 @@ for (format in names(origins)) {
 
 
 #Nr 1: författarfraktionerad tibble utan studentuppsatser
-csvall2 <- read_csv("/home/shub/assets/diva/diva_csvall2_allt_latest.csv", col_names = TRUE)
+csvall2 <- suppressMessages(read_csv("/home/shub/assets/diva/diva_csvall2_allt_latest.csv", col_names = TRUE))
 #PID blir felaktigt format vid inläsning, därför:
 colnames(csvall2)[1] <- "PID"
 
 
-csv2 <- read_csv("/home/shub/assets/diva/diva_csv2_allt_latest.csv", col_names = TRUE)
+csv2 <- suppressMessages(read_csv("/home/shub/assets/diva/diva_csv2_allt_latest.csv", col_names = TRUE))
 #PID blir felaktigt format vid inläsning, därför:
 colnames(csv2)[1] <- "PID"
 

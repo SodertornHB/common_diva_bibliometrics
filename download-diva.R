@@ -2,6 +2,7 @@
 #
 #
 #download-diva
+#171031 fixat backup-problematiken (sparade för många filer) samt anpassat till sh_parametrar
 #171031 JÖ felhantering
 #171012 Tidyverse och _ fixat, kolumn x1 återstår
 #171008 CHL återgång till innan Tidyverse pga symlink
@@ -15,6 +16,9 @@
 #
 
 suppressMessages(library(tidyverse))
+library(stringr)
+
+source('/home/shub/assets/sh_parameters.R')
 
 #
 # Filnamnet vi vill att nedladdade filer ska ha, %format% byts ut mot det specifika formatet, ex.v.
@@ -29,10 +33,13 @@ filename = "/home/shub/assets/diva/diva_%format%_%timestamp%.csv"
 
 dir.create(dirname(filename), showWarnings = FALSE)
 
+origins = list("csvall2_allt" = str_c(downloadpath, download_csvall2, noOfRows),
+               "csv2_allt" = str_c(downloadpath, download_csv02, noOfRows)
+)
 #max 50000 rader, kan komma att behöva uppdateras framöver
-origins = list("csvall2_allt" = "http://sh.diva-portal.org/smash/export.jsf?format=csvall2&noOfRows=500000",
-               "csv2_allt" = "http://sh.diva-portal.org/smash/export.jsf?format=csv02&noOfRows=500000"
-               )
+#origins = list("csvall2_allt" = "http://sh.diva-portal.org/smash/export.jsf?format=csvall2&noOfRows=500000",
+#               "csv2_allt" = "http://sh.diva-portal.org/smash/export.jsf?format=csv02&noOfRows=500000"
+#               )
 
 for (format in names(origins)) {
   f = sub("%format%", format, filename)
@@ -46,7 +53,7 @@ for (format in names(origins)) {
   # så att denna i stället pekar på den nyss nedladdade filen.
   #
   cfile = sub("%timestamp%", "latest", f)
-  fs = sub("%timestamp%", format(Sys.time(), "%Y%m%d_%H%M"), f)
+  fs = sub("%timestamp%", format(Sys.time(), "%Y%m%d.%H%M"), f)
   tempfile = tempfile("diva")
 
   download.file(origins[[format]], tempfile, quiet=TRUE)
@@ -78,35 +85,17 @@ for (format in names(origins)) {
     }
   }
 }
+  
+#  l = list.files(path = dirname(cfile), pattern = sub("%timestamp%", ".*", basename(f)))
+#  if (length(l) >= 4) {
+#    for (fname in l[(length(l)-4):1]) {
+#      file.remove(paste(dirname(cfile), fname, sep="/"))
+#    }
+#  }
+#}
 
 
 #------------------------------------------------------------------------------------------------------------------------
-#
-#bearbetning av nedladdad data: förbered dfs.
-#
-#Nr 1: författarfraktionerad df utan studentuppsatser
-#csvall2 <- read.csv("/home/shub/assets/diva/diva_csvall2_allt_latest.csv",
-#                    header=TRUE,
-#                    sep=",",
-#                    encoding="UTF-8",
-#                    na.strings=c("","NA"),
-#                    stringsAsFactors = FALSE
-#                    )
-
-#csv2 <- read.csv("/home/shub/assets/diva/diva_csv2_allt_latest.csv",
-#                    header=TRUE,
-#                    sep=",",
-#                    encoding="UTF-8",
-#                    na.strings=c("","NA"),
-#                    stringsAsFactors = FALSE
-#                    )
-
-#author <- merge(x = csv2, y = csvall2, by.x = "PID", by.y = "PID", all.x = TRUE)
-
-#sortera bort studentuppsatser
-#author <- author[!(author$PublicationType == "Studentuppsats" |
-#                     author$PublicationType == "Studentuppsats/Examensarbete" |
-#                     author$PublicationType == "Studentuppsats (Examensarbete)"),]  
 
 
 #Nr 1: författarfraktionerad tibble utan studentuppsatser
@@ -123,75 +112,25 @@ colnames(csv2)[1] <- "PID"
 author <- left_join(csv2, csvall2, by = "PID")
 
 #sortera bort studentuppsatser ur författar-tibble
-author <- filter(author, !(PublicationType %in% c("Studentuppsats",
-                                                  "Studentuppsats/Examensarbete",
-                                                  "Studentuppsats (Examensarbete)"
-                                                  )
-                           )
-                 )
+author <- filter(author, !(PublicationType %in% publication_type[c("o", "p", "q")]))
 
 #eller: 
 #author <- author[!(is.na(author$ContentType)),] syntax för read.csv
 #vilken är mest tillförlitlig? PublicationType säger Greta
 
-#Nr 2: dela csvall2 i två delar, en med uppsatser och en utan (resultat: 2 dfs).
-#Notera utropstecknet.
-#studentessays <- csvall2[(csvall2$PublicationType == "Studentuppsats" |
-#                            csvall2$PublicationType == "Studentuppsats/Examensarbete" |
-#                            csvall2$PublicationType == "Studentuppsats (Examensarbete)"),]
-
-#researchpubl <- csvall2[!(csvall2$PublicationType == "Studentuppsats" |
-#                            csvall2$PublicationType == "Studentuppsats/Examensarbete" |
-#                            csvall2$PublicationType == "Studentuppsats (Examensarbete)"),]
-
 #följande tidyverse-kod fungerar inte med symlink
 #Nr 2: dela csvall2 i två delar, en med uppsatser och en utan (resultat: 2 tibbles). Notera utropstecknet.
-studentessays <- filter(csvall2, (PublicationType %in% c("Studentuppsats", 
-                                                        "Studentuppsats/Examensarbete", 
-                                                        "Studentuppsats (Examensarbete)"
-                                                        )
-                                  )
-                        )
+studentessays <- filter(csvall2, (PublicationType %in% publication_type[c("o", "p", "q")]))
 
-researchpubl <- filter(csvall2, !(PublicationType %in% c("Studentuppsats",
-                                                         "Studentuppsats/Examensarbete",
-                                                         "Studentuppsats (Examensarbete)"
-                                                        )
-                                 )
-                       )
-
-#Nr 3: dra endast Sh ur researchpubl och author (resultat: 2 df)
-#author_sh <- author[!(is.na(author$OrganisationIds)),]
-#researchpubl_sh <- researchpubl[(grepl("\\[481\\]", researchpubl$Name)),]
+researchpubl <- filter(csvall2, !(PublicationType %in% publication_type[c("o", "p", "q")]))
 
 #Nr 3: endast Sh-affilierade publikationer från researchpubl och author (resultat: 2 tibbles)
-sh_author <- filter(author, !(is.na(OrganisationIds)))
-sh_researchpubl <- filter(researchpubl, (grepl("\\[481\\]", Name)))
-
+author_sh <- filter(author, !(is.na(OrganisationIds)))
+researchpubl_sh <- filter(researchpubl, (grepl(sh_csv, Name)))
 
 #-----------------------------------------------------------------------------------------------------------------
-#spara undan de 5 dfs
-#list_of_dataframes <- list("author" = author, 
-#                           "studentessays" = studentessays, 
-#                           "researchpubl" = researchpubl,
-#                           "author_sh" = author_sh,
-#                           "researchpubl_sh" = researchpubl_sh)
 
-#for (df in names(list_of_dataframes)) {
-#  af = sub("%format%", df, filename)
-  
-#  afile = sub("%timestamp%", "latest", af)
-#  if(is.na(file.info(afile)$mtime) ||
-#     file.info(afile)$mtime < Sys.time()-(60*60*24)) {
-#    as = sub("%timestamp%", format(Sys.time(), "%Y%m%d_%H%M"), af)
-#    write.csv(list_of_dataframes[[df]], as)
-#    if (file.exists(afile)) {
-#      file.remove(afile)
-#      }
-#    file.symlink(as, afile)
-#    }
-
-#spara undan de 5 tibbles
+#spara 5 tibbles på shub
 list_of_tibbles <- list("author" = author, "studentessays" = studentessays, "researchpubl" = researchpubl,
                         "author_sh" = author_sh, "researchpubl_sh" = researchpubl_sh)
 
@@ -200,7 +139,9 @@ for (t in names(list_of_tibbles)) {
   af = sub("%format%", t, filename)
   
   afile = sub("%timestamp%", "latest", af)
-  as = sub("%timestamp%", format(Sys.time(), "%Y%m%d_%H%M"), af)
+
+  as = sub("%timestamp%", format(Sys.time(), "%Y%m%d.%H%M"), af)
+
   write_csv(list_of_tibbles[[t]], as)
   if (file.exists(afile)) {
     file.remove(afile)
@@ -209,7 +150,7 @@ for (t in names(list_of_tibbles)) {
   
   #
   # Efter att ha laddat ner och uppdaterat länkar så tar vi bort eventuella tidigare nedladdningar.
-  # Vi behåller dock en kopia bakåt i tiden. Notera mönstret [^_]* för underscore
+  # Vi behåller dock en kopia bakåt i tiden. Notera mönstret [^_]* för underscore.
   #
   l = list.files(path = dirname(afile), pattern = sub("%timestamp%", "[^_]*", basename(af)))
   if (length(l) >= 4) {

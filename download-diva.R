@@ -3,6 +3,7 @@
 #
 #download-diva
 #171031 fixat backup-problematiken (sparade för många filer) samt anpassat till sh_parametrar
+#171031 JÖ felhantering
 #171012 Tidyverse och _ fixat, kolumn x1 återstår
 #171008 CHL återgång till innan Tidyverse pga symlink
 #170920 CHL (senaste uppdatering:anpassad till Tidyverse)
@@ -14,7 +15,7 @@
 #
 #
 
-library(tidyverse)
+suppressMessages(library(tidyverse))
 library(stringr)
 
 source('/home/shub/assets/sh_parameters.R')
@@ -53,22 +54,25 @@ for (format in names(origins)) {
   #
   cfile = sub("%timestamp%", "latest", f)
   fs = sub("%timestamp%", format(Sys.time(), "%Y%m%d.%H%M"), f)
-  download.file(origins[[format]], fs)
+  tempfile = tempfile("diva")
+
+  download.file(origins[[format]], tempfile, quiet=TRUE)
+
+  #
+  # Filen ska vara större än 500000 bytes och ha fler än 5000 rader. Den
+  # ska också innehålla kolumnen PID, deklarerad i början av filen.
+  #
+  stopifnot(file.info(tempfile)$size > 500000)
+  stopifnot(length(readLines(tempfile)) > 5000)
+  stopifnot(grepl("PID", readChar(tempfile, 100), fixed=TRUE) == TRUE)
+
+  # Flytta till rätt ställe om allt är okey
+  invisible(file.rename(tempfile, fs))
+
   if (file.exists(cfile)) {
     file.remove(cfile)
-    }
+  }
   file.symlink(fs, cfile)
-  
-  #cfile = sub("%timestamp%", "latest", f)
-  #if (is.na(file.info(cfile)$mtime) ||
-  #    file.info(cfile)$mtime < Sys.time()-(60*60*24)) {
-  #  fs = sub("%timestamp%", format(Sys.time(), "%Y%m%d_%H%M"), f)
-  #  download.file(origins[[format]], fs)
-  #  if (file.exists(cfile)) {
-  #    file.remove(cfile)
-  #  }
-  #  file.symlink(fs, cfile)
-  #}
   #
   
   # Efter att ha laddat ner och uppdaterat länkar så tar vi bort eventuella tidigare nedladdningar.
@@ -95,12 +99,12 @@ for (format in names(origins)) {
 
 
 #Nr 1: författarfraktionerad tibble utan studentuppsatser
-csvall2 <- read_csv("/home/shub/assets/diva/diva_csvall2_allt_latest.csv", col_names = TRUE)
+csvall2 <- suppressMessages(read_csv("/home/shub/assets/diva/diva_csvall2_allt_latest.csv", col_names = TRUE))
 #PID blir felaktigt format vid inläsning, därför:
 colnames(csvall2)[1] <- "PID"
 
 
-csv2 <- read_csv("/home/shub/assets/diva/diva_csv2_allt_latest.csv", col_names = TRUE)
+csv2 <- suppressMessages(read_csv("/home/shub/assets/diva/diva_csv2_allt_latest.csv", col_names = TRUE))
 #PID blir felaktigt format vid inläsning, därför:
 colnames(csv2)[1] <- "PID"
 
@@ -135,7 +139,9 @@ for (t in names(list_of_tibbles)) {
   af = sub("%format%", t, filename)
   
   afile = sub("%timestamp%", "latest", af)
+
   as = sub("%timestamp%", format(Sys.time(), "%Y%m%d.%H%M"), af)
+
   write_csv(list_of_tibbles[[t]], as)
   if (file.exists(afile)) {
     file.remove(afile)

@@ -10,7 +10,7 @@ header-includes:
   \fancyhf{}
   \addtolength{\headheight}{3cm}
   \rhead{Biblioteket, författare \myformat\today} 
-  \lhead{\includegraphics[width=6cm]{sh_logo}}
+  \lhead{\includegraphics[width=6cm]{sh.logo}}
   \rfoot{\thepage}
 output:
   pdf_document:

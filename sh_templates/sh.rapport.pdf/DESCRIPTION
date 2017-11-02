@@ -1,7 +1,7 @@
-Package: sh_rapport_pdf
+Package: sh.rapport.pdf
 Title: SHtemplate for R markdown
 Version: 0.0.0.9000
-Authors@R: Greta Linder
+Author: Greta Linder
 Description: Template for reports from Södertörn University.
 Depends: R (>= 3.3.2)
 License: What license is it under?

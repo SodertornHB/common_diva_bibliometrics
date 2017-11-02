@@ -1,0 +1,19 @@
+---
+title: "Example reporter"
+output:
+  pdf_document:
+    latex_engine: xelatex
+  html_document: default
+  word_document: default
+classoption: landscape
+---
+
+```{r echo=FALSE}
+
+# load("validator-issn.RData")
+library(pander)
+panderOptions('table.split.table', Inf)
+pander(diva.table)
+```
+
+

@@ -231,14 +231,14 @@ filter_orgs <- function(divadata, org) {
 
 
 doaj_match <- function(divadata) {
-  doaj_listan <- read_csv("/home/shub/assets/doaj_20171014.csv")
+  doaj_listan <- read_csv("/home/shub/assets/doaj.csv")
   divadata %>%
     mutate(JournalISSN = ifelse(is.na(JournalISSN), 0, JournalISSN)) %>%
     mutate(JournalEISSN = ifelse(is.na(JournalEISSN), 0, JournalEISSN)) %>%
     mutate(FreeFulltext = ifelse(FreeFulltext == "true", TRUE)) %>%
     select(PID, PublicationType, ContentType, Language, JournalISSN, JournalEISSN, Status, Year, FullTextLink, FreeFulltext) %>%
-    filter(ContentType %in% c("Övrigt vetenskapligt", "Refereegranskat")) %>%
-    filter(PublicationType %in% c("Artikel, forskningsöversikt", "Artikel i tidskrift")) %>%
+    filter(ContentType %in% content_type[c("a", "b")]) %>%
+    filter(PublicationType %in% publication_type[c("a", "b")]) %>%
     mutate(doaj_issn = ((JournalISSN %in% doaj_listan$`Journal ISSN (print version)`)|
                           (JournalEISSN %in% doaj_listan$`Journal EISSN (online version)`)))
 }

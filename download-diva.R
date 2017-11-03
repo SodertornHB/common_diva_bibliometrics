@@ -34,7 +34,7 @@ filename = "/home/shub/assets/diva/diva_%format%_%timestamp%.csv"
 dir.create(dirname(filename), showWarnings = FALSE)
 
 origins = list("csvall2_allt" = str_c(downloadpath, download_csvall2, noOfRows),
-               "csv2_allt" = str_c(downloadpath, download_csv02, noOfRows)
+               "csv2_allt" = str_c(downloadpath, download_csv2, noOfRows)
 )
 #max 50000 rader, kan komma att behöva uppdateras framöver
 #origins = list("csvall2_allt" = "http://sh.diva-portal.org/smash/export.jsf?format=csvall2&noOfRows=500000",

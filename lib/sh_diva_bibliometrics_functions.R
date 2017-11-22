@@ -256,16 +256,15 @@ doaj_match <- function(divadata) {
 
 # arkivering --------------------------------------------------------------
 
-#
-# Funktioner för att arkivera information relaterad till en rapport för spårbarhet.
-#
-# Initialiserar ett antal globala variabler för att hålla reda på och unikt identifiera denna
-# rapport.
-#
-# Argument:
-#     id: En identifierare för denna typ av rapport, utan mellanslag, exempelvis "arsrapport" eller
-#         "validering-issn"
-#
+#' Funktion för att arkivera information relaterad till en rapport för spårbarhet.
+#'
+#' Initialiserar ett antal globala variabler för att hålla reda på och unikt identifiera denna
+#' rapport.
+#'
+#' @param id  En identifierare för denna typ av rapport, utan mellanslag,
+#'            exempelvis "arsrapport" eller "validering-issn"
+#' @return NULL
+#'
 sh_archive_start <- function(id) {
   XSH_timestamp <<- format(Sys.time(), "%Y%m%d-%H%M%S")
   XSH_id <<- sprintf("%s-%s", id, XSH_timestamp)
@@ -273,33 +272,29 @@ sh_archive_start <- function(id) {
   dir.create(XSH_dir)
 }
 
-#
-# Funktion för att lägga till en data.frame till ett rapport-arkiv. Denna skrivs ner som CSV.
-#
-# Argument:
-#     df: Den data.frame som ska läggas till
-#     id: En identifierare för denna data.frame, utan mellanslag, exempelvis "tabell", "original",
-#         etc.
-#
+#' Funktion för att lägga till en data.frame till ett rapport-arkiv. Denna skrivs ner som CSV.
+#'
+#' @param df Den data.frame som ska läggas till
+#' @param id En identifierare, utan mellanslag, exempelvis "tabell", "original", etc.
+#' @return NULL
 sh_archive_df <- function(df, id) {
   write.csv(df, sprintf("%s/%s.csv", XSH_dir, id))
 }
 
-#
-# Funktion för att lägga till en resurs (en fil) till ett rapport-arkiv. Denna kopieras som den är till
-# destinationen.
-#
-# Argument:
-#     f: Den fil som ska kopieras
-#
+#' Funktion för att lägga till en resurs (en fil) till ett rapport-arkiv. Denna kopieras som den är till
+#' destinationen.
+#'
+#' @param f Den fil som ska kopieras
+#' @return NULL
+#'
 sh_archive_resource <- function(f) {
   file.copy(f, XSH_dir)
 }
 
 #
-# Funktion för att avsluta arbetet med ett rapport-arkiv. Denna funktion gör inget mer än skapar
-# ett manifest över alla ingående filer i arkivet.
-#
+#' Funktion för att avsluta arbetet med ett rapport-arkiv. Denna funktion gör inget mer än skapar
+#' ett manifest över alla ingående filer i arkivet.
+#'
 sh_archive_end <- function() {
   write(list.files(path=XSH_dir), sprintf("%s/%s", XSH_dir, "manifest.txt"))
 }

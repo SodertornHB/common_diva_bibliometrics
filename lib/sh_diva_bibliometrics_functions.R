@@ -10,48 +10,53 @@
 #source('/home/shub/src/common/lib/sh_diva_bibliometrics_functions.R')
 #
 #
+# Ingående katagorier
 #
-
+#  sh_filter_	Funktioner för att filtrera data.frames på ett spårbart sätt
+#  sh_archive_	Funktioner för att arkivera rapporter och ingående data
+#  filter_	Diverse data-specifika funktioner för att filtrera data
+#  doaj_	Funktion för att matcha DOAJ
+#  sh_timeline_ Diagramfunktioner
+#
 library(tidyverse)
 library(lazyeval)
 
 source('/home/shub/assets/sh_parameters.R')
 
 
-# filter ------------------------------------------------------------------
+# sh_filter ------------------------------------------------------------------
 #
 
-
+#' 
+#' Applicerar ett dplyr::filter på en data.frame och gör samtidigt en notering (i samma data.frame)
+#' om vilket filter som gjorde att en specifik rad filtrerades bort. Funktionen använder kolumnerna
+#' "Filtered" och "Filter" som tillfälliga kolumner för att hålla ordning på informationen. Dessa
+#' kolumner skapas om de inte finns. Det finns inga garantier för att en returnerad data.frame är
+#' sorterad på samma sätt som den ursprungliga.
+#'
+#' @param df  En data.frame, lämpligen DiVA-data men fnuktionen fungerar
+#'            för alla varianter av data.frames
+#' @param ... Ett eller flera uttryck som skickas omodifierade till
+#'            dplyr::filter, ex.v. PublicationType != "Artikel"
+#' @return    En data.frame där filtrerade rader är noterade med TRUE i
+#'            kolumnen "Filtered" och där kolumnen "Filter" innehåller det
+#'            exakta uttryck som gjorde att de filtrerades bort.
+#' @examples
+#'
+#' Exempel på användning:
+#'
+#' x <- data.frame(PID = c(123456,789012,345679),
+#'                 PublicationType = c("Artikel", "Artikel", "Doktorsavhandling, monografi"),
+#'                 Name = c("Test Testsson", "Test Josesson", "Test Abrahamsson"))
+#' x <- sh_filter_track(x, PublicationType != "Artikel")
+#' x <- sh_filter_track(x, PID != 345679)
+#'
+#' [x]
+#'     PID              PublicationType             Name Filtered                       Filter
+#' 1 123456                      Artikel    Test Testsson     TRUE PublicationType != "Artikel"
+#' 2 789012                      Artikel    Test Josesson     TRUE PublicationType != "Artikel"
+#' 3 345679 Doktorsavhandling, monografi Test Abrahamsson     TRUE                PID != 345679
 sh_filter_track <- function(df, ...) {
-  # Applicerar ett dplyr::filter på en data.frame och gör samtidigt en notering (i samma data.frame)
-  # om vilket filter som gjorde att en specifik rad filtrerades bort. Funktionen använder kolumnerna
-  # "Filtered" och "Filter" som tillfälliga kolumner för att hålla ordning på informationen. Dessa
-  # kolumner skapas om de inte finns. Det finns inga garantier för att en returnerad data.frame är
-  # sorterad på samma sätt som den ursprungliga.
-  #
-  # Argument:
-  #     df: En data.frame, lämpligen DiVA-data men funktionen fungerar för alla varianter av data.frames
-  #    ...: Ett eller flera uttryck som skickas omodifierade till dplyr::filter, ex.v.
-  #              PublicationType != "Artikel"
-  #
-  # Returvärde:
-  #   En data.frame där filtrerade rader är noterade med TRUE i kolumnen "Filtered" och där kolumnen
-  #   "Filter" innehåller det exakta uttryck som gjorde att de filtrerades bort.
-  #
-  # Exempel på användning:
-  #
-  # x <- data.frame(PID = c(123456,789012,345679),
-  #                 PublicationType = c("Artikel", "Artikel", "Doktorsavhandling, monografi"),
-  #                 Name = c("Test Testsson", "Test Josesson", "Test Abrahamsson"))
-  # x <- sh_filter_track(x, PublicationType != "Artikel")
-  # x <- sh_filter_track(x, PID != 345679)
-  #
-  # [x]
-  #     PID              PublicationType             Name Filtered                       Filter
-  # 1 123456                      Artikel    Test Testsson     TRUE PublicationType != "Artikel"
-  # 2 789012                      Artikel    Test Josesson     TRUE PublicationType != "Artikel"
-  # 3 345679 Doktorsavhandling, monografi Test Abrahamsson     TRUE                PID != 345679
-  #
   if (!("Filtered" %in% colnames(df))) {
     # Skapa kolumnerna Filtered och Filter om de inte finns redan
     df$Filtered <- FALSE
@@ -76,18 +81,23 @@ sh_filter_track <- function(df, ...) {
   }
 }
 
+#'
+#' Efter användningen av sh_filter_track innehåller en data.frame både sådana rader som har blivit bort-
+#' filtrerade och anledningen bakom det. Denna funktion tar en data.frame från sh_filter_track och
+#' plockar bort rader som har blivit filtrerade och tar även bort kolumnerna "Filter" och
+#' "Filtered"
+#'
+#' @param df Den data.frame som ska städas
+#' @return En data.frame utan kolumnerna "Filter" och "Filtered"
+#'
 sh_filter_track_result <- function(df) {
-  #
-  # Efter användningen av sh_filter_track innehåller en data.frame både sådana rader som har blivit bort-
-  # filtrerade och anledningen bakom det. Denna funktion tar en data.frame från sh_filter_track och
-  # plockar bort rader som har blivit filtrerade och tar även bort kolumnerna "Filter" och
-  # "Filtered"
-  #
   W <-dplyr::filter(df, Filtered != TRUE)
   W$Filter <- NULL
   W$Filtered <- NULL
   return(W)
 }
+
+# filter ------------------------------------------------------------------
 
 #
 #specifika filter-funktioner
@@ -294,7 +304,7 @@ sh_archive_end <- function() {
   write(list.files(path=XSH_dir), sprintf("%s/%s", XSH_dir, "manifest.txt"))
 }
 
-# diagram -----------------------------------------------------------------
+# sh_timeline -----------------------------------------------------------------
 
 #
 #tidsserier

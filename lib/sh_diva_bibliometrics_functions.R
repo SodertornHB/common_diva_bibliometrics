@@ -34,7 +34,7 @@ source('/home/shub/assets/sh_parameters.R')
 #' kolumner skapas om de inte finns. Det finns inga garantier för att en returnerad data.frame är
 #' sorterad på samma sätt som den ursprungliga.
 #'
-#' @param df  En data.frame, lämpligen DiVA-data men fnuktionen fungerar
+#' @param df  En data.frame, lämpligen DiVA-data men funktionen fungerar
 #'            för alla varianter av data.frames
 #' @param ... Ett eller flera uttryck som skickas omodifierade till
 #'            dplyr::filter, ex.v. PublicationType != "Artikel"
@@ -234,6 +234,20 @@ filter_orgs <- function(divadata, org) {
   #skapa en separat kolumn med alla orgids i divadata:
   a %>%
     filter(map_lgl(list_of_orgs, ~any(c(org) %in% .x)))
+}
+
+
+#
+#Östersjöforskning
+#
+
+#' Filtrerar till publikationer som är finansierade av Östersjöstiftelsen eller har ämnesområdet Östersjö- och Östeuropaforskning.
+#' 
+#' @param df  En data.frame med DiVA-data
+#' @return
+#' 
+subject_baltic <- function(df) {
+  df <- mutate(df, baltic = ifelse(grepl("Baltic", df$ResearchSubjects)|grepl("Östersjöstiftelsen", df$Funder), T, F))
 }
 
 

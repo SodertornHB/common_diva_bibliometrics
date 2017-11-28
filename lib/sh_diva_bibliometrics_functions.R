@@ -244,7 +244,7 @@ filter_orgs <- function(divadata, org) {
 #' Filtrerar till publikationer som är finansierade av Östersjöstiftelsen eller har ämnesområdet Östersjö- och Östeuropaforskning.
 #' 
 #' @param df  En data.frame med DiVA-data
-#' @return
+#' @return    En data.frame med kolumnen baltic med värdet TRUE eller FALSE.
 #' 
 subject_baltic <- function(df) {
   df <- mutate(df, baltic = ifelse(grepl("Baltic", df$ResearchSubjects)|grepl("Östersjöstiftelsen", df$Funder), T, F))

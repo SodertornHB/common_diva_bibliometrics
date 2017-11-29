@@ -241,7 +241,8 @@ filter_orgs <- function(divadata, org) {
 #Östersjöforskning
 #
 
-#' Filtrerar till publikationer som är finansierade av Östersjöstiftelsen eller har ämnesområdet Östersjö- och Östeuropaforskning.
+#' Funktion som i en ny kolumn markerar vilka publikationer som är finansierade av Östersjöstiftelsen eller har ämnesområdet 
+#' Östersjö- och Östeuropaforskning. Möjliggör senare filtrering med TRUE.
 #' 
 #' @param df  En data.frame med DiVA-data
 #' @return    En data.frame med kolumnen baltic med värdet TRUE eller FALSE.

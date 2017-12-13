@@ -1,4 +1,6 @@
 #
+# OBSOLETE: se sh_diva_bibliometrics_functions.R istället.
+#
 # Funktioner för att arkivera information relaterad till en rapport för spårbarhet.
 # Funktionerna är inte ett separat bibliotek utan måste inkluderas i de program där
 # man vill använda dem. Exempelvis genom:

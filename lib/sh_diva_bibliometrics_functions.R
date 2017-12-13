@@ -10,48 +10,53 @@
 #source('/home/shub/src/common/lib/sh_diva_bibliometrics_functions.R')
 #
 #
+# Ingående katagorier
 #
-
+#  sh_filter_	Funktioner för att filtrera data.frames på ett spårbart sätt
+#  sh_archive_	Funktioner för att arkivera rapporter och ingående data
+#  filter_	Diverse data-specifika funktioner för att filtrera data
+#  doaj_	Funktion för att matcha DOAJ
+#  sh_timeline_ Diagramfunktioner
+#
 library(tidyverse)
 library(lazyeval)
 
 source('/home/shub/assets/sh_parameters.R')
 
 
-# filter ------------------------------------------------------------------
+# sh_filter ------------------------------------------------------------------
 #
 
-
+#' 
+#' Applicerar ett dplyr::filter på en data.frame och gör samtidigt en notering (i samma data.frame)
+#' om vilket filter som gjorde att en specifik rad filtrerades bort. Funktionen använder kolumnerna
+#' "Filtered" och "Filter" som tillfälliga kolumner för att hålla ordning på informationen. Dessa
+#' kolumner skapas om de inte finns. Det finns inga garantier för att en returnerad data.frame är
+#' sorterad på samma sätt som den ursprungliga.
+#'
+#' @param df  En data.frame, lämpligen DiVA-data men funktionen fungerar
+#'            för alla varianter av data.frames
+#' @param ... Ett eller flera uttryck som skickas omodifierade till
+#'            dplyr::filter, ex.v. PublicationType != "Artikel"
+#' @return    En data.frame där filtrerade rader är noterade med TRUE i
+#'            kolumnen "Filtered" och där kolumnen "Filter" innehåller det
+#'            exakta uttryck som gjorde att de filtrerades bort.
+#' @examples
+#'
+#' Exempel på användning:
+#'
+#' x <- data.frame(PID = c(123456,789012,345679),
+#'                 PublicationType = c("Artikel", "Artikel", "Doktorsavhandling, monografi"),
+#'                 Name = c("Test Testsson", "Test Josesson", "Test Abrahamsson"))
+#' x <- sh_filter_track(x, PublicationType != "Artikel")
+#' x <- sh_filter_track(x, PID != 345679)
+#'
+#' [x]
+#'     PID              PublicationType             Name Filtered                       Filter
+#' 1 123456                      Artikel    Test Testsson     TRUE PublicationType != "Artikel"
+#' 2 789012                      Artikel    Test Josesson     TRUE PublicationType != "Artikel"
+#' 3 345679 Doktorsavhandling, monografi Test Abrahamsson     TRUE                PID != 345679
 sh_filter_track <- function(df, ...) {
-  # Applicerar ett dplyr::filter på en data.frame och gör samtidigt en notering (i samma data.frame)
-  # om vilket filter som gjorde att en specifik rad filtrerades bort. Funktionen använder kolumnerna
-  # "Filtered" och "Filter" som tillfälliga kolumner för att hålla ordning på informationen. Dessa
-  # kolumner skapas om de inte finns. Det finns inga garantier för att en returnerad data.frame är
-  # sorterad på samma sätt som den ursprungliga.
-  #
-  # Argument:
-  #     df: En data.frame, lämpligen DiVA-data men funktionen fungerar för alla varianter av data.frames
-  #    ...: Ett eller flera uttryck som skickas omodifierade till dplyr::filter, ex.v.
-  #              PublicationType != "Artikel"
-  #
-  # Returvärde:
-  #   En data.frame där filtrerade rader är noterade med TRUE i kolumnen "Filtered" och där kolumnen
-  #   "Filter" innehåller det exakta uttryck som gjorde att de filtrerades bort.
-  #
-  # Exempel på användning:
-  #
-  # x <- data.frame(PID = c(123456,789012,345679),
-  #                 PublicationType = c("Artikel", "Artikel", "Doktorsavhandling, monografi"),
-  #                 Name = c("Test Testsson", "Test Josesson", "Test Abrahamsson"))
-  # x <- sh_filter_track(x, PublicationType != "Artikel")
-  # x <- sh_filter_track(x, PID != 345679)
-  #
-  # [x]
-  #     PID              PublicationType             Name Filtered                       Filter
-  # 1 123456                      Artikel    Test Testsson     TRUE PublicationType != "Artikel"
-  # 2 789012                      Artikel    Test Josesson     TRUE PublicationType != "Artikel"
-  # 3 345679 Doktorsavhandling, monografi Test Abrahamsson     TRUE                PID != 345679
-  #
   if (!("Filtered" %in% colnames(df))) {
     # Skapa kolumnerna Filtered och Filter om de inte finns redan
     df$Filtered <- FALSE
@@ -76,18 +81,23 @@ sh_filter_track <- function(df, ...) {
   }
 }
 
+#'
+#' Efter användningen av sh_filter_track innehåller en data.frame både sådana rader som har blivit bort-
+#' filtrerade och anledningen bakom det. Denna funktion tar en data.frame från sh_filter_track och
+#' plockar bort rader som har blivit filtrerade och tar även bort kolumnerna "Filter" och
+#' "Filtered"
+#'
+#' @param df Den data.frame som ska städas
+#' @return En data.frame utan kolumnerna "Filter" och "Filtered"
+#'
 sh_filter_track_result <- function(df) {
-  #
-  # Efter användningen av sh_filter_track innehåller en data.frame både sådana rader som har blivit bort-
-  # filtrerade och anledningen bakom det. Denna funktion tar en data.frame från sh_filter_track och
-  # plockar bort rader som har blivit filtrerade och tar även bort kolumnerna "Filter" och
-  # "Filtered"
-  #
   W <-dplyr::filter(df, Filtered != TRUE)
   W$Filter <- NULL
   W$Filtered <- NULL
   return(W)
 }
+
+# filter ------------------------------------------------------------------
 
 #
 #specifika filter-funktioner
@@ -227,6 +237,21 @@ filter_orgs <- function(divadata, org) {
 }
 
 
+#
+#Östersjöforskning
+#
+
+#' Funktion som i en ny kolumn markerar vilka publikationer som är finansierade av Östersjöstiftelsen eller har ämnesområdet 
+#' Östersjö- och Östeuropaforskning. Möjliggör senare filtrering med TRUE.
+#' 
+#' @param df  En data.frame med DiVA-data
+#' @return    En data.frame med kolumnen baltic med värdet TRUE eller FALSE.
+#' 
+subject_baltic <- function(df) {
+  df <- mutate(df, baltic = ifelse(grepl("Baltic", df$ResearchSubjects)|grepl("Östersjöstiftelsen", df$Funder), T, F))
+}
+
+
 # doaj --------------------------------------------------------------------
 
 
@@ -246,16 +271,15 @@ doaj_match <- function(divadata) {
 
 # arkivering --------------------------------------------------------------
 
-#
-# Funktioner för att arkivera information relaterad till en rapport för spårbarhet.
-#
-# Initialiserar ett antal globala variabler för att hålla reda på och unikt identifiera denna
-# rapport.
-#
-# Argument:
-#     id: En identifierare för denna typ av rapport, utan mellanslag, exempelvis "arsrapport" eller
-#         "validering-issn"
-#
+#' Funktion för att arkivera information relaterad till en rapport för spårbarhet.
+#'
+#' Initialiserar ett antal globala variabler för att hålla reda på och unikt identifiera denna
+#' rapport.
+#'
+#' @param id  En identifierare för denna typ av rapport, utan mellanslag,
+#'            exempelvis "arsrapport" eller "validering-issn"
+#' @return NULL
+#'
 sh_archive_start <- function(id) {
   XSH_timestamp <<- format(Sys.time(), "%Y%m%d-%H%M%S")
   XSH_id <<- sprintf("%s-%s", id, XSH_timestamp)
@@ -263,38 +287,34 @@ sh_archive_start <- function(id) {
   dir.create(XSH_dir)
 }
 
-#
-# Funktion för att lägga till en data.frame till ett rapport-arkiv. Denna skrivs ner som CSV.
-#
-# Argument:
-#     df: Den data.frame som ska läggas till
-#     id: En identifierare för denna data.frame, utan mellanslag, exempelvis "tabell", "original",
-#         etc.
-#
+#' Funktion för att lägga till en data.frame till ett rapport-arkiv. Denna skrivs ner som CSV.
+#'
+#' @param df Den data.frame som ska läggas till
+#' @param id En identifierare, utan mellanslag, exempelvis "tabell", "original", etc.
+#' @return NULL
 sh_archive_df <- function(df, id) {
   write.csv(df, sprintf("%s/%s.csv", XSH_dir, id))
 }
 
-#
-# Funktion för att lägga till en resurs (en fil) till ett rapport-arkiv. Denna kopieras som den är till
-# destinationen.
-#
-# Argument:
-#     f: Den fil som ska kopieras
-#
+#' Funktion för att lägga till en resurs (en fil) till ett rapport-arkiv. Denna kopieras som den är till
+#' destinationen.
+#'
+#' @param f Den fil som ska kopieras
+#' @return NULL
+#'
 sh_archive_resource <- function(f) {
   file.copy(f, XSH_dir)
 }
 
 #
-# Funktion för att avsluta arbetet med ett rapport-arkiv. Denna funktion gör inget mer än skapar
-# ett manifest över alla ingående filer i arkivet.
-#
+#' Funktion för att avsluta arbetet med ett rapport-arkiv. Denna funktion gör inget mer än skapar
+#' ett manifest över alla ingående filer i arkivet.
+#'
 sh_archive_end <- function() {
   write(list.files(path=XSH_dir), sprintf("%s/%s", XSH_dir, "manifest.txt"))
 }
 
-# diagram -----------------------------------------------------------------
+# sh_timeline -----------------------------------------------------------------
 
 #
 #tidsserier

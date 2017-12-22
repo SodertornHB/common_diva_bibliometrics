@@ -21,7 +21,7 @@
 library(tidyverse)
 library(lazyeval)
 
-source('/home/shub/assets/sh_parameters.R')
+source('/home/shub/src/common/lib/sh_parameters.R')
 
 
 # sh_filter ------------------------------------------------------------------

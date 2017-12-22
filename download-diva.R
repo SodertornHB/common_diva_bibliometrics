@@ -18,7 +18,7 @@
 suppressMessages(library(tidyverse))
 library(stringr)
 
-source('/home/shub/assets/sh_parameters.R')
+source('/home/shub/src/common/lib/sh_parameters.R')
 
 #
 # Filnamnet vi vill att nedladdade filer ska ha, %format% byts ut mot det specifika formatet, ex.v.

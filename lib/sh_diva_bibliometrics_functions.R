@@ -100,17 +100,22 @@ sh_filter_track_result <- function(df) {
 # filter ------------------------------------------------------------------
 
 #
+
 #specifika filter-funktioner
-#filter-funktionerna filtrerar diva-data från assets: kom ihåg att välja rätt uval därifrån
 #
 
 #
 #PublicationType
 #
 
-#filter_publtyp_art_bok_kap_konf: tar fram endast art (art + forsknöversikt),
-#bok, kap, och konfbidrag (med abstract etc om inte publsubtype-filter tillämpas)
-
+#' filtrera fram följande PublicationType: "Artikel, forskningsöversikt", "Artikel i tidskrift",
+#' "Bok", "Kapitel i bok, del av antologi", "Konferensbidrag"
+#' (med abstract etc om inte publsubtype-filter tillämpas)
+#'
+#' @param divadata den tibble med divadata som ska filtreras
+#'
+#' @return filtrerad tibble
+#'
 filter_publtyp_art_bok_kap_konf <- function(divadata) {
   a = divadata %>%
     filter(PublicationType %in% c("Artikel, forskningsöversikt", "Artikel i tidskrift",
@@ -119,7 +124,12 @@ filter_publtyp_art_bok_kap_konf <- function(divadata) {
 }
 
 
-#filter_publtyp_avh: tar fram endast avhandlingar (monografier och sammanläggnings)
+#' filter_publtyp_avh: tar fram endast avhandlingar (monografier och sammanläggnings) ur klumn PublicationType
+#'
+#' @param divadata den tibble med divadata som ska filtreras
+#'
+#' @return filtrerad tibble
+#'
 filter_publtyp_avh <- function(divadata) {
   a = divadata %>%
     filter(PublicationType %in% c("Doktorsavhandling, monografi", "Doktorsavhandling, sammanläggning"))
@@ -132,7 +142,12 @@ filter_publtyp_avh <- function(divadata) {
 
 #filter contenttype: obs att studentuppsats har Content Type NA
 
-#filter_content_ovrig_no: tar bort kategori "Övrig (populärvetenskap, debatt, mm)"
+#' filter_content_ovrig_no: tar bort kategori "Övrig (populärvetenskap, debatt, mm)"
+#'
+#' @param divadata den tibble med divadata som ska filtreras
+#'
+#' @return filtrerad tibble
+
 filter_content_ovrig_no <- function(divadata) {
   a = divadata %>%
     filter(ContentType != "Övrig (populärvetenskap, debatt, mm)")
@@ -140,7 +155,12 @@ filter_content_ovrig_no <- function(divadata) {
 }
 
 
-#filter_content_ovr_vet_no: tar bort kategori "Övrigt vetenskapligt"
+#' filter_content_ovr_vet_no: tar bort kategori "Övrigt vetenskapligt"
+#'
+#' @param divadata den tibble med divadata som ska filtreras
+#'
+#' @return filtrerad tibble
+
 filter_content_ovr_vet_no <- function(divadata) {
   a = divadata %>%
     filter(ContentType != "Övrigt vetenskapligt")
@@ -151,14 +171,24 @@ filter_content_ovr_vet_no <- function(divadata) {
 #Status
 #
 
-#filter_status_publ_yes: tar fram publicerat material
+#' filter_status_publ_yes: tar fram publicerat material
+#'
+#' @param divadata den tibble med divadata som ska filtreras
+#'
+#' @return filtrerad tibble
+
 filter_status_publ_yes <- function(divadata) {
   a = divadata %>%
     filter(is.na(Status)|Status == "published")
   return(a)
 }
 
-#filter_status_publ_no: tar fram opublicerat material
+#' filter_status_publ_no: tar fram opublicerat material
+#'
+#' @param divadata den tibble med divadata som ska filtreras
+#'
+#' @return filtrerad tibble
+
 filter_status_publ_no <- function(divadata) {
   a = divadata %>%
     filter(Status %in% c("accepted", "aheadofprint", "inPress", "submitted"))
@@ -169,7 +199,14 @@ filter_status_publ_no <- function(divadata) {
 #Year
 #
 
-#filter_years: filtrerar på år
+#' filter_years: filtrerar på år
+#'
+#' @param divadata den tibble med divadata som ska filtreras
+#' @param startyear det år som ska vara startpunkt för urvalet
+#' @param endyear det år som ska vara slutpunkt för urvalet
+#'
+#' @return filtrerad tibble
+
 filter_years <- function(divadata, startyear, endyear) {
   a = divadata %>%
     filter(Year >= startyear & Year <= endyear)
@@ -179,7 +216,12 @@ filter_years <- function(divadata, startyear, endyear) {
 #FullTextLink
 #
 
-#filter_fulltextlink_yes: tar fram publ med fulltextlänk
+#' filter_fulltextlink_yes: tar fram publ med fulltextlänk
+#'
+#' @param divadata den tibble med divadata som ska filtreras
+#'
+#' @return filtrerad tibble
+
 filter_fulltextlink_yes <- function(divadata) {
   a = divadata %>%
     filter(!is.na(FullTextLink))
@@ -190,7 +232,12 @@ filter_fulltextlink_yes <- function(divadata) {
 #PublicationSubType
 #
 
-#filter_publsubtype_papers: tar bort de kategorier som inte är papers (abstracts, poster, presentation)
+#' filter_publsubtype_papers: tar bort de kategorier som inte är papers (abstracts, poster, presentation)
+#'
+#' @param divadata den tibble med divadata som ska filtreras
+#'
+#' @return filtrerad tibble
+
 filter_publsubtype_papers <- function(divadata) {
   a = divadata %>%
     filter(is.na(PublicationSubtype)|PublicationSubtype %in% c("editorialMaterial", "exhibitionCatalogue",
@@ -204,14 +251,24 @@ filter_publsubtype_papers <- function(divadata) {
 #Reviewed
 #
 
-#filter_reviewed_yes: tar fram granskade publikationer
+#' filter_reviewed_yes: tar fram granskade publikationer
+#'
+#' @param divadata den tibble med divadata som ska filtreras
+#'
+#' @return filtrerad tibble
+
 filter_reviewed_yes <- function(divadata) {
   a = divadata %>%
     filter(Reviewed == "true")
   return(a)
 }
 
-#filter__reviewed_no: tar fram ogranskade publikationer
+#' filter__reviewed_no: tar fram ogranskade publikationer
+#'
+#' @param divadata den tibble med divadata som ska filtreras
+#'
+#' @return filtrerad tibble
+
 filter_reviewed_no <- function(divadata) {
   a = divadata %>%
     filter(Reviewed == "false")
@@ -221,6 +278,17 @@ filter_reviewed_no <- function(divadata) {
 #
 #Institutioner och ämnen
 #
+
+#' Title
+#'
+#' @param divadata den tibble med divadata som ska filtreras
+#' @param org organisation som ska filtreras fram enligt common_diva_bibliometrics/lib/sh_parameters
+#'
+#' @return framfiltrerad tibble
+#'
+#' @examples
+#' filter_orgs(diva, svenska) ger alla publikationer, författare som har organisationstillhörighet svenska
+#' såsom den definieras med institutionskoder i sh_parameters
 
 filter_orgs <- function(divadata, org) {
   source('/home/shub/assets/sh_parameters.R')
@@ -237,9 +305,8 @@ filter_orgs <- function(divadata, org) {
 }
 
 
-#
-#Östersjöforskning
-#
+# Östersjöforskning -------------------------------------------------------
+
 
 #' Funktion som i en ny kolumn markerar vilka publikationer som är finansierade av Östersjöstiftelsen eller har ämnesområdet 
 #' Östersjö- och Östeuropaforskning. Möjliggör senare filtrering med TRUE.
@@ -254,6 +321,12 @@ subject_baltic <- function(df) {
 
 # doaj --------------------------------------------------------------------
 
+
+#' matchning mot doaj
+#'
+#' @param divadata den tibble med divadata som ska matchas mot DOAJ
+#'
+#' @return divadata med en extra kolumn där doaj-status anges
 
 doaj_match <- function(divadata) {
   doaj_listan <- read_csv("/home/shub/assets/doaj.csv")
@@ -319,7 +392,14 @@ sh_archive_end <- function() {
 #
 #tidsserier
 #
-#input: diva-tibble i csvall2-format och kolumn att redovisa, inom citationstecken
+ 
+#' Tidsserie för DiVA-data
+#'
+#' @param diva_csvall2_format diva-tibble i csvall2-format
+#' @param spec_column kolumn att redovisa i diagram, inom citationstecken
+#'
+#' @return diagram
+
 sh_timeline <- function(diva_csvall2_format, spec_column) {
   s <- diva_csvall2_format %>% #räknar förekomster
     group_by_("Year") %>%

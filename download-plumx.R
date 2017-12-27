@@ -41,12 +41,10 @@ total_plumxdata <- data.frame(fromJSON(txt="/home/shub/assets/plumx.JSON"))
 #hämta upp nested data så att all data får egna kolumner
 #flatten i jsonlite i konflikt med flatten i purrr. Stämmer det fortfarande?
 total_plumxdata <- flatten(total_plumxdata, recursive = TRUE) 
-#begränsa datamängden genom att endast arbeta med de kolumner som behövs
-urval_plumxdata <- select(total_plumxdata, matches(".sortCount.|.repoUrl"))
 
-urval_plumxdata <- total_plumxdata %>%
-  select(matches(".sortCount.|.repoUrl")) %>%
-  filter(!(document.identifier.repoUrl == "NULL" | grepl("^c", document.identifier.repoUrl))) %>%
+urval_plumxdata <- total_plumxdata %>% 
+  select(matches(".sortCount.|.repoUrl")) %>% #begränsa datamängden genom att endast arbeta med de kolumner som behövs
+  filter(!(document.identifier.repoUrl == "NULL" | grepl("^c", document.identifier.repoUrl) | grepl("chalmers", document.identifier.repoUrl))) %>%
   separate(document.identifier.repoUrl, into = c("url", "idnr"), sep = "-")
 
 #gör om tomma Url-celler samt felformaterade Url:er till NAs

@@ -291,7 +291,6 @@ filter_reviewed_no <- function(divadata) {
 #' såsom den definieras med institutionskoder i sh_parameters
 
 filter_orgs <- function(divadata, org) {
-  source('/home/shub/assets/sh_parameters.R')
   list_of_orgs <- regmatches(divadata[["Name"]], gregexpr("\\[\\d+\\]", divadata[["Name"]])) #gregexpr tar flera instanser per rad
   
   #ta bort []

@@ -318,6 +318,16 @@ subject_baltic <- function(df) {
 }
 
 
+#' Funktion som i en kolumn markera om Östersjöstiftelsen är finansiär. Möjliggör filtrering.
+#' 
+#' @param df En data.frame med DiVA-data
+#' @return   En data.frame med kolumnen funder_oss med värdet TRUE eller FALSE.
+#' 
+funder_oss <- function(df) {
+  df <- mutate(df, oss = ifelse(grepl("Östersjöstiftelsen", df$Funder), T, F))
+}
+
+
 # doaj --------------------------------------------------------------------
 
 

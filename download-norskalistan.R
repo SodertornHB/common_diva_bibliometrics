@@ -3,7 +3,7 @@
 #
 #nedladdning norska listan
 #171002 JÖ
-#loggar in på nsd:s webbplats (Jonas creds) och laddar ner de två csv-filerna: en för issn och en för förlag.
+#loggar in på nsd:s webbplats (Gretas creds) och laddar ner de två csv-filerna: en för issn och en för förlag.
 #
 #
 #

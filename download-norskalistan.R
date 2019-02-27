@@ -9,7 +9,7 @@
 #
 
 #ladda alltid in tidyverse:
-library(tidyverse)
+suppressMessages(library(tidyverse))
 
 #för lösenord/username
 source('/home/shub/assets/cred.R')

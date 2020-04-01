@@ -44,6 +44,7 @@ ikl <- c("11809", "495", "498", "5550", "7374", "7378", "7384", "7393", "7456", 
 internationell_halsa <- c("11751", "11834")
 internationella_relationer <- c("11824")
 journalistik <- c("7403", "7405", "7406", "7407", "11825")
+juridik <-  c("11827", "883451")
 konstvetenskap <- c("7455", "7456", "11815")
 lararutbildning <- c("495", "11821", "873601")
 litteraturvetenskap <- c("7457", "7458", "7459", "7460",  "11816")
@@ -57,7 +58,6 @@ nationalekonomi <- c("7474", "7475", "7476", "7477", "11826")
 nmt <- c("11831", "484", "486", "7362", "7395", "7408", "7454", "7467", "7468", "7470", "7472", "7473",
          "7521", "7522", "7523", "7527", "11751", "11831", "11832", "11833", "11834", "11835", "11837",
          "11838", "11839", "11840", "15800")
-offentlig_ratt <-  c("11827")
 pedagogik <- c("7478", "7479", "11818")
 polisutbildning <- c("873602")
 politikens_organisering <- c("878302")
@@ -67,7 +67,7 @@ religionsvetenskap <- c("7482", "7483", "7484", "7485", "11808")
 retorik <- c("7486", "7488", "7489", "7490", "11819")
 sam <- c("11822", "7375", "7389", "7406", "7407", "7452", "7477", "7481", "7504", "7508", "7516", "9000",
          "11750", "11822", "11823", "11824", "11825", "11826", "11827", "11828", "11829", "11830", "11841",
-         "11842", "11843", "11844", "878301", "878302")
+         "11842", "11843", "11844", "878301", "878302", "883451")
 samtidshistoriska <- c("497", "7497", "7498", "7499", "7531", "11846")
 scohost <- c("7502", "7503", "7504", "11844", "13305")
 sh_csv <- "\\[481\\]"
@@ -90,10 +90,11 @@ centra_list <- c("enter" = enter, "maris" = maris, "scohost" = scohost)
                 "estetik" = estetik, "etnologi" = etnologi, "foretagsekonomi" = foretagsekonomi, "filosofi" = filosofi,
                 "genusvetenskap" = genusvetenskap, "geografi" = geografi, "historia" = historia,
                 "idehistoria" = idehistoria, "internationell_halsa" = internationell_halsa,
-                "internationella_relationer" = internationella_relationer, "journalistik" = journalistik,
+                "internationella_relationer" = internationella_relationer, "journalistik" = journalistik, "juridik" = juridik,
                 "konstvetenskap" = konstvetenskap, "litteraturvetenskap" = litteraturvetenskap,
-                "maltidskunskap" = maltidskunskap,"matematisk_didaktik" = matematisk_didaktik, "medieteknik" = medieteknik, "miljovetenskap" = miljovetenskap,
-                "mkv" = mkv, "nationalekonomi" = nationalekonomi, "offentlig_ratt" = offentlig_ratt,
+                "lararutbildning" = lararutbildning, "maltidskunskap" = maltidskunskap,"matematisk_didaktik" = matematisk_didaktik,
+                "medieteknik" = medieteknik, "miljovetenskap" = miljovetenskap,
+                "mkv" = mkv, "nationalekonomi" = nationalekonomi,
                 "pedagogik" = pedagogik, "psykologi" = psykologi, "praktisk" = praktisk,
                 "religionsvetenskap" = religionsvetenskap, "retorik" = retorik, "samtidshistoriska" = samtidshistoriska,  "socialt_arbete" = socialt_arbete,
                 "sociologi" = sociologi, "statsvetenskap" = statsvetenskap, "svenska" = svenska,

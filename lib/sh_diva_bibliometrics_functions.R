@@ -279,7 +279,7 @@ filter_reviewed_no <- function(divadata) {
 #Institutioner och ämnen
 #
 
-#' Title
+#' filter_orgs: begränsar till en organisation
 #'
 #' @param divadata den tibble med divadata som ska filtreras
 #' @param org organisation som ska filtreras fram enligt common_diva_bibliometrics/lib/sh_parameters
@@ -303,6 +303,27 @@ filter_orgs <- function(divadata, org) {
     filter(map_lgl(list_of_orgs, ~any(c(org) %in% .x)))
 }
 
+
+
+#' filter_orgs_author: begränsar i en organistation när underlaget divadata en rad per författare
+#'
+#' @param divadata den tibble med divadata som ska filtreras
+#' @param org organisation som ska filtreras fram enligt common_diva_bibliometrics/lib/sh_parameters
+#'
+#' @return framfiltrerad tibble
+
+filter_orgs_author <- function(divadata, org) {
+  list_of_orgs <- regmatches(divadata[["OrganisationIds"]], gregexpr("\\d+", divadata[["OrganisationIds"]])) #gregexpr tar flera instanser per rad
+  
+  #ta bort []
+  list_of_orgs <- rapply(list_of_orgs, function(x){gsub("\\[", "", x)}, how = "list")
+  list_of_orgs <- rapply(list_of_orgs, function(x){gsub("\\]", "", x)}, how = "list")
+  list_of_orgs <- tibble(list_of_orgs)
+  a <- bind_cols(divadata, list_of_orgs)
+  #skapa en separat kolumn med alla orgids i divadata:
+  a %>%
+    filter(map_lgl(list_of_orgs, ~any(c(org) %in% .x)))
+}
 
 # Östersjöforskning -------------------------------------------------------
 

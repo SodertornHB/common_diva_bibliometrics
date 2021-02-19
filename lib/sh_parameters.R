@@ -37,10 +37,11 @@ geografi <- c("7394", "7395", "11833")
 historia <- c("7399", "7400", "7401", "7402", "11803")
 idehistoria <- c("7353", "7354", "7355", "7356", "11807")
 hs <- c("11802", "485", "497", "7356", "7381", "7402", "7409", "7462", "7485", "7499", "7500", "7501", 
-        "11803", "11804", "11805", "11806", "11807", "11808", "11846")
+        "11803", "11804", "11805", "11806", "11807", "11808", "11846", "884751")
 ikl <- c("11809", "495", "498", "5550", "7374", "7378", "7384", "7393", "7456", "7460", "7479", "7489",
          "7490", "7519", "7520", "11810", "11811", "11812", "11813", "11814", "11815", "11816", "11817",
          "11818", "11819", "11820", "11821", "15801")
+ims <- c("884751")
 internationell_halsa <- c("11751", "11834")
 internationella_relationer <- c("11824")
 journalistik <- c("7403", "7405", "7406", "7407", "11825")
@@ -58,16 +59,17 @@ nationalekonomi <- c("7474", "7475", "7476", "7477", "11826")
 nmt <- c("11831", "484", "486", "7362", "7395", "7408", "7454", "7467", "7468", "7470", "7472", "7473",
          "7521", "7522", "7523", "7527", "11751", "11831", "11832", "11833", "11834", "11835", "11837",
          "11838", "11839", "11840", "15800")
+offent_forv <- ("884753")
 pedagogik <- c("7478", "7479", "11818")
-polisutbildning <- c("873602")
-politikens_organisering <- c("878302")
+polis <- c("873602", "884752")
+politikens_org <- c("878302")
 psykologi <- c("7481", "11828")
 reinvent <- c("878301")
 religionsvetenskap <- c("7482", "7483", "7484", "7485", "11808")
 retorik <- c("7486", "7488", "7489", "7490", "11819")
 sam <- c("11822", "7375", "7389", "7406", "7407", "7452", "7477", "7481", "7504", "7508", "7516", "9000",
          "11750", "11822", "11823", "11824", "11825", "11826", "11827", "11828", "11829", "11830", "11841",
-         "11842", "11843", "11844", "878301", "878302", "883451")
+         "11842", "11843", "11844", "878301", "878302", "883451", "884753")
 samtidshistoriska <- c("497", "7497", "7498", "7499", "7531", "11846")
 scohost <- c("7502", "7503", "7504", "11844", "13305")
 sh_csv <- "\\[481\\]"
@@ -83,9 +85,11 @@ utveckling_och_int_samarbete <- c("7527", "11840")
 #medelsfördelningsspecifika parametrar:
 
 #för kopplingar institution/ämne:
-inst_list <- list("hs" = hs, "ikl" = ikl, "nmt" = nmt, "sam" = sam)
-#centra: maris, scohost, cbees
-centra_list <- c("enter" = enter, "maris" = maris, "scohost" = scohost)
+inst_list <- list("hs" = hs, "ikl" = ikl, "nmt" = nmt, "sam" = sam, "polis" = polis)
+#centra: maris, scohost, cbees, ims, reinvent, politikens_org
+centra_list <- c("enter" = enter, "maris" = maris, "scohost" = scohost, "ims" = ims, "reinvent" = reinvent,
+                 "politikens_org" = politikens_org)
+#polis samma som institution
 ämnen_list <- c("arkeologi" = arkeologi, "arkivvetenskap" = arkivvetenskap, "biologi" = biologi, "engelska" = engelska,
                 "estetik" = estetik, "etnologi" = etnologi, "foretagsekonomi" = foretagsekonomi, "filosofi" = filosofi,
                 "genusvetenskap" = genusvetenskap, "geografi" = geografi, "historia" = historia,
@@ -94,8 +98,8 @@ centra_list <- c("enter" = enter, "maris" = maris, "scohost" = scohost)
                 "konstvetenskap" = konstvetenskap, "litteraturvetenskap" = litteraturvetenskap,
                 "lararutbildning" = lararutbildning, "maltidskunskap" = maltidskunskap,"matematisk_didaktik" = matematisk_didaktik,
                 "medieteknik" = medieteknik, "miljovetenskap" = miljovetenskap,
-                "mkv" = mkv, "nationalekonomi" = nationalekonomi,
-                "pedagogik" = pedagogik, "psykologi" = psykologi, "praktisk" = praktisk,
+                "mkv" = mkv, "nationalekonomi" = nationalekonomi, "offent_forv" = offent_forv,
+                "pedagogik" = pedagogik, "polis" = polis, "psykologi" = psykologi, "praktisk" = praktisk,
                 "religionsvetenskap" = religionsvetenskap, "retorik" = retorik, "samtidshistoriska" = samtidshistoriska,  "socialt_arbete" = socialt_arbete,
                 "sociologi" = sociologi, "statsvetenskap" = statsvetenskap, "svenska" = svenska,
                 "turismvetenskap" = turismvetenskap, "utveckling_och_int_samarbete" = utveckling_och_int_samarbete)

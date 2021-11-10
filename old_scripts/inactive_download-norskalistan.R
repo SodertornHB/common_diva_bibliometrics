@@ -29,11 +29,11 @@ if (Sys.info()['user'] == 'shub') {
 if (is.na(file.info(nsd.issn)$mtime) ||
     file.info(nsd.issn)$mtime < Sys.time()-(60*60*24*30)) {
   library(httr)
-  r <- POST("https://dbh.nsd.uib.no/publiseringskanaler/BrukerLoggpaSjekk.action", config(ssl_verifypeer=0),
+  r <- POST("https://kanalregister.hkdir.no/publiseringskanaler/BrukerLoggpaSjekk.action", config(ssl_verifypeer=0),
             body = list(skjemaPassord = nsd.password,
                         BrukerLoggpaSjekk_0 = 'Logg+inn',
                         skjemaEpost = nsd.username))
-  r <- GET("https://dbh.nsd.uib.no/publiseringskanaler/AlltidFerskListeTidsskriftSomCsv", config(ssl_verifypeer=0))
+  r <- GET("https://kanalregister.hkdir.no/publiseringskanaler/AlltidFerskListeTidsskriftSomCsv", config(ssl_verifypeer=0))
   writeBin(content(r, 'raw'), nsd.issn)
   #writeBin istället för write_csv (no tidyverse-parsing). encoding = "ISO-8859-1"
 }
@@ -42,11 +42,11 @@ if (is.na(file.info(nsd.issn)$mtime) ||
 if (is.na(file.info(nsd.forlag)$mtime) ||
     file.info(nsd.forlag)$mtime < Sys.time()-(60*60*24*30)) {
   library(httr)
-  r <- POST("https://dbh.nsd.uib.no/publiseringskanaler/BrukerLoggpaSjekk.action", config(ssl_verifypeer=0),
+  r <- POST("https://kanalregister.hkdir.no/publiseringskanaler/BrukerLoggpaSjekk.action", config(ssl_verifypeer=0),
             body = list(skjemaPassord = nsd.password,
                         BrukerLoggpaSjekk_0 = 'Logg+inn',
                         skjemaEpost = nsd.username))
-  r <- GET("https://dbh.nsd.uib.no/publiseringskanaler/AlltidFerskListeForlagSomCsv", config(ssl_verifypeer=0))
+  r <- GET("https://kanalregister.hkdir.no/publiseringskanaler/AlltidFerskListeForlagSomCsv", config(ssl_verifypeer=0))
   writeBin(content(r, 'raw'), nsd.forlag)
   #writeBin istället för write_csv (no tidyverse-parsing). encoding = "ISO-8859-1"
 }

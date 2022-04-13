@@ -21,6 +21,7 @@ noOfRows <- "&noOfRows=500000"
 arkeologi <- c("485", "7357", "7358", "7359", "11804") #maris och något mer räknas in här i diva?
 arkivvetenskap <- c("7409", "11805")
 beegs <- c("483")
+bibloteksvetenskap <- c("882602")
 biologi <- c("7360", "7361", "7362", "11832")
 cbees <- c("482", "496")
 praktisk <- c("5550", "7365", "7366", "11810")

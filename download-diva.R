@@ -56,7 +56,7 @@ for (format in names(origins)) {
   fs = sub("%timestamp%", format(Sys.time(), "%Y%m%d.%H%M"), f)
   tempfile = tempfile("diva")
 
-  download.file(origins[[format]], tempfile, quiet=TRUE)
+  download.file(origins[[format]], tempfile, quiet=TRUE, timeout=120)
 
   #
   # Filen ska vara större än 500000 bytes och ha fler än 5000 rader. Den

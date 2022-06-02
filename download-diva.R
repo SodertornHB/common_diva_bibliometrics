@@ -20,6 +20,8 @@ library(stringr)
 
 source('/home/shub/src/common/lib/sh_parameters.R')
 
+options(timeout = 300)
+
 #
 # Filnamnet vi vill att nedladdade filer ska ha, %format% byts ut mot det specifika formatet, ex.v.
 # csvall eller csvall2. Här processas också ett antal basfiler, som kan läsas in för vidare bearbetning.

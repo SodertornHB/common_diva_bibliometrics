@@ -348,6 +348,16 @@ funder_oss <- function(df) {
   df <- mutate(df, oss = ifelse(grepl("Östersjöstiftelsen", df$Funder), T, F))
 }
 
+# Open Access -------------------------------------------------------------
+
+#' Funtion som i en kolumn markerar om publikationen antingen har en fulltext i DiVA och/eller är länkad till en öppen resurs.
+#' 
+#' @param df  En data.frame med DiVA-data
+#' @return    En data-frame med kolumnen oa med färdet TRUE eller FALSE.
+#' 
+oa_publishing <- function(df) {
+  df <- mutate(df, oa = ifelse((FreeFulltext == TRUE)|(!(is.na(FullTextLink))), T, F))
+}
 
 # doaj --------------------------------------------------------------------
 
